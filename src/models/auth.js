@@ -40,7 +40,7 @@ function Auth(args = {}) {
             console.log(`:turnstile :render ${_turnstileId}`);
 
             _turnstileId = window.turnstile.render("#cf-turnstile-container", {
-                sitekey: "0x4AAAAAAA2IUz1CU0EU3E-O",
+                sitekey: "0x4AAAAAADgz2Mji7aRumggZ",
             });
 
             _expired = false;
