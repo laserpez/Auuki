@@ -51,6 +51,7 @@ let db = {
 
     // Targets
     powerTarget: models.powerTarget.default,
+    powerTargetStep: models.powerTargetStep.default,
     resistanceTarget: models.resistanceTarget.default,
     slopeTarget: models.slopeTarget.default,
     cadenceTarget: models.cadenceTarget.default,
@@ -254,11 +255,15 @@ xf.reg('ui:data-tile-switch-set', (index, db) => {
 xf.reg('ui:power-target-set', (powerTarget, db) => {
     db.powerTarget = models.powerTarget.set(powerTarget);
 });
+xf.reg('ui:powerTargetStep-set', (step, db) => {
+    db.powerTargetStep = models.powerTargetStep.set(step);
+    models.powerTargetStep.storage.set(db.powerTargetStep);
+});
 xf.reg('ui:power-target-inc', (_, db) => {
-    db.powerTarget = models.powerTarget.inc(db.powerTarget);
+    db.powerTarget = models.powerTarget.set(db.powerTarget + db.powerTargetStep);
 });
 xf.reg(`ui:power-target-dec`, (_, db) => {
-    db.powerTarget = models.powerTarget.dec(db.powerTarget);
+    db.powerTarget = models.powerTarget.set(db.powerTarget - db.powerTargetStep);
 });
 xf.reg('ui:cadence-target-set', (cadenceTarget, db) => {
     db.cadenceTarget = models.cadenceTarget.set(cadenceTarget);
@@ -416,6 +421,7 @@ xf.reg('app:start', async function(_, db) {
     models.dockMode.apply(db.dockMode);
 
     db.ftp = models.ftp.set(models.ftp.restore());
+    db.powerTargetStep = models.powerTargetStep.set(models.powerTargetStep.restore());
     db.weight = models.weight.set(models.weight.restore());
     db.theme = models.theme.set(models.theme.restore());
     db.measurement = models.measurement.set(models.measurement.restore());

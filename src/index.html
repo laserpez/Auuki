@@ -945,6 +945,23 @@
                                     effect="weight-set"
                                     prop="weight">Set</button>
                         </div>
+                        <div id="power-step-settings" class="settings-tile">
+                            <label for="power-step-value" class="settings-tile--label">Power Step</label>
+                            <input is="int-input"
+                                id="power-step-value"
+                                class="settings-tile--input"
+                                name="power-step-value"
+                                type="number"
+                                value="10"
+                                prop="powerTargetStep"
+                                effect="powerTargetStep-set" />
+                            <button is="set-button"
+                                    id="power-step-btn"
+                                    class="settings-tile--btn flat-btn"
+                                    default="10"
+                                    effect="powerTargetStep-set"
+                                    prop="powerTargetStep">Set</button>
+                        </div>
                     </div>
                     <div class="settings-btn-row">
 

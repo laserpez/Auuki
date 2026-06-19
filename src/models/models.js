@@ -267,6 +267,23 @@ class Volume extends Target {
     }
 }
 
+class PowerTargetStep extends Model {
+    postInit(args = {}) {
+        const storageModel = {
+            key: this.prop,
+            fallback: this.defaultValue(),
+            parse: parseInt,
+        };
+        this.min = 1;
+        this.max = 50;
+        this.storage = args.storage(storageModel);
+    }
+    defaultValue() { return 10; }
+    defaultIsValid(value) {
+        return Number.isInteger(value) && inRange(this.min, this.max, value);
+    }
+}
+
 class PowerTarget extends Target {
     postInit(args = {}) {
         this.min = existance(args.min, 0);
@@ -1615,6 +1632,7 @@ const virtualState = new VirtualState();
 const speedState   = new SpeedState();
 
 const powerTarget = new PowerTarget({prop: 'powerTarget'});
+const powerTargetStep = new PowerTargetStep({prop: 'powerTargetStep', storage: LocalStorageItem});
 const resistanceTarget = new ResistanceTarget({prop: 'resistanceTarget'});
 const slopeTarget = new SlopeTarget({prop: 'slopeTarget'});
 const cadenceTarget = new CadenceTarget({prop: 'cadenceTarget'});
@@ -1666,6 +1684,7 @@ let models = {
     cadenceAvg,
 
     powerTarget,
+    powerTargetStep,
     resistanceTarget,
     slopeTarget,
     cadenceTarget,
