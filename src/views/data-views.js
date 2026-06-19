@@ -199,6 +199,32 @@ class IntervalTime extends DataView {
 
 customElements.define('interval-time', IntervalTime);
 
+class WorkoutTimeRemaining extends DataView {
+    getDefaults() {
+        return {
+            format: 'mm:ss',
+            prop:   'watch:elapsed',
+        };
+    }
+    config() {
+        this.format = existance(this.getAttribute('format'), this.getDefaults().format);
+        this.duration = 0;
+    }
+    subs() {
+        xf.sub('watch:elapsed', this.onUpdate.bind(this), this.signal);
+        xf.sub('db:workout', this.onWorkout.bind(this), this.signal);
+    }
+    onWorkout(workout) {
+        this.duration = workout?.meta?.duration ?? 0;
+    }
+    transform(state) {
+        const remaining = Math.max(0, this.duration - this.state);
+        return formatTime({value: remaining, format: this.format, unit: 'seconds'});
+    }
+}
+
+customElements.define('workout-time-remaining', WorkoutTimeRemaining);
+
 class SpeedValue extends DataView {
     postInit() {
         this.measurement = this.getDefaults().measurement;

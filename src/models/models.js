@@ -208,6 +208,8 @@ class Sources extends Model {
             kcalZStack: 0,
             // ['graph', 'power']
             graphZStack: 0,
+            // ['intervalTime', 'workoutTimeRemaining']
+            intervalTimeZStack: 0,
         };
         return sources;
     }

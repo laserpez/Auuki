@@ -98,11 +98,22 @@
                             </div>
 
                             <div class="data-tile" id="data-tile--interval-time">
-                                <h2 class="data-tile--heading">Interval Time</h2>
-                                <div class="data-tile--value-cont">
-                                    <interval-time id="interval-time"
-                                                   class="data-tile--value">--:--</interval-time>
-                                </div>
+                                <z-stack data-key="intervalTimeZStack">
+                                    <z-stack-item class="active">
+                                        <h2 class="data-tile--heading">Interval Time</h2>
+                                        <div class="data-tile--value-cont">
+                                            <interval-time id="interval-time"
+                                                           class="data-tile--value">--:--</interval-time>
+                                        </div>
+                                    </z-stack-item>
+                                    <z-stack-item>
+                                        <h2 class="data-tile--heading">Time Remaining</h2>
+                                        <div class="data-tile--value-cont">
+                                            <workout-time-remaining id="workout-time-remaining"
+                                                                    class="data-tile--value">--:--</workout-time-remaining>
+                                        </div>
+                                    </z-stack-item>
+                                </z-stack>
                             </div>
                             <div class="data-tile" id="data-tile--heart-rate">
                                 <z-stack data-key="heartRateZStack">
