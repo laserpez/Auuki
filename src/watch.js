@@ -347,18 +347,25 @@ class Watch {
         const self = this;
 
         if(self.isWorkoutStarted()) {
-            let i             = self.intervalIndex;
-            let s             = self.stepIndex;
-            let intervals     = self.intervals;
-            let lessIntervals = (i - 1) >= 0;
+            let i         = self.intervalIndex;
+            let s         = 0;
+            let intervals = self.intervals;
 
-            if(lessIntervals) {
-                i -= 1;
-                s  = 0;
+            if(self._backTimer) {
+                // second press within window → go to previous interval
+                clearTimeout(self._backTimer);
+                self._backTimer = null;
 
-                self.nextInterval(intervals, i, s);
-                self.nextStep(intervals, i, s);
+                if((i - 1) >= 0) {
+                    i -= 1;
+                }
+            } else {
+                // first press → restart current interval, arm timer for second press
+                self._backTimer = setTimeout(() => { self._backTimer = null; }, 500);
             }
+
+            self.nextInterval(intervals, i, s);
+            self.nextStep(intervals, i, s);
         } else {
             xf.dispatch('watch:lap');
             xf.dispatch('watch:lapTime', 0);
