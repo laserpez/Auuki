@@ -36,15 +36,16 @@ function Router(args = {}) {
     async function start() {
         const status = await auth.status();
 
+        // Intervals.icu uses local API key auth, override backend status
+        if(intervals.isConnected()) {
+            xf.dispatch('services', {intervals: true});
+        }
+
         const params = getParams();
         if(hasParams(params)) {
             console.log(params);
             await onQueryParams(params);
         } else {
-            // TODO: remove
-            // get list of planned events once per period
-            if(status.intervals) {
-            }
         }
         return;
     }

@@ -1493,7 +1493,15 @@ class OAuth extends HTMLElement {
             if(this.services[service]) {
                 models.api[service].disconnect();
             } else {
-                models.api[service].connect();
+                if(service === 'intervals') {
+                    const athleteId = prompt('Intervals.icu Athlete ID:');
+                    if(!athleteId) return;
+                    const apiKey = prompt('Intervals.icu API Key:');
+                    if(!apiKey) return;
+                    models.api[service].connect(apiKey, athleteId);
+                } else {
+                    models.api[service].connect();
+                }
             }
             return;
         }

@@ -1,121 +1,83 @@
 import { xf, once, print, exists, } from '../functions.js';
 import { isoDate, } from '../utils.js';
 import { OAuthService, DialogMsg, stateParam, } from './enums.js';
-import config from './config.js';
+import { LocalStorageItem } from '../storage/local-storage.js';
 
 function Intervals(args = {}) {
     const serviceName = OAuthService.intervals;
-    const api_uri = config.get().API_URI;
-    const pwa_uri = config.get().PWA_URI;
-    let intervals_client_id = config.get().INTERVALS_CLIENT_ID;
+    const baseUrl = 'https://intervals.icu';
 
-    const update = function() {
-        intervals_client_id = config.get().INTERVALS_CLIENT_ID;
-    };
+    const apiKeyStore = LocalStorageItem({key: 'intervals-api-key', fallback: ''});
+    const athleteIdStore = LocalStorageItem({key: 'intervals-athlete-id', fallback: ''});
 
-    // Step D
-    async function connect() {
-        const scope = 'ACTIVITY:WRITE,CALENDAR:READ,SETTINGS:READ';
-        const state = stateParam.encode(serviceName);
-        stateParam.store(state);
-
-        const url =
-              'https://intervals.icu/oauth/authorize' +
-              '?' +
-              new URLSearchParams({
-                  client_id: intervals_client_id,
-                  redirect_uri: pwa_uri,
-                  scope,
-                  state,
-              }).toString();
-
-        window.location.replace(url);
+    function getCredentials() {
+        const apiKey = apiKeyStore.get();
+        const athleteId = athleteIdStore.get();
+        return { apiKey, athleteId };
     }
 
-    async function disconnect() {
-        // TODO:
-        // try {
-        //     const stravaResponse = await fetch(
-        //         "https://intervals.icu/api/v1/disconnect-app",
-        //         {method: 'DELETE',}
-        //     );
-        //     console.log(`:oauth :intervals :disconnect`);
-        //     const stravaBody = await stravaResponse.text();
-
-        //     const apiResponse = await fetch(
-        //         api_uri+`/api/intervals/deauthorize`,
-        //         {method: 'POST', credentials: 'include',},
-        //     );
-
-        //     const apiBody = await apiResponse.text();
-
-        //     xf.dispatch(`services`, {intervals: false});
-        // } catch (e) {
-        //     console.log(`:intervals :deauthorize :error `, e);
-        // }
-
-        // fallback since it seems deauthorize it supported only from
-        // the Intervals.icu settings page
-        await connect();
+    function isConnected() {
+        const { apiKey, athleteId } = getCredentials();
+        return apiKey !== '' && athleteId !== '';
     }
 
-    // Step 3
-    async function paramsHandler(args = {}) {
-        const state = args.state ?? '';
-        const code = args.code ?? '';
-        const scope = args.scope ?? '';
+    function authHeaders() {
+        const { apiKey } = getCredentials();
+        return {
+            'Authorization': 'Basic ' + btoa('API_KEY:' + apiKey),
+        };
+    }
 
-        const url = `${api_uri}/api/intervals/oauth/code` +
-              '?' +
-              new URLSearchParams({
-                  state: state,
-                  code: code,
-                  scope: scope,
-              })
-              .toString();
+    function athleteUrl(path) {
+        const { athleteId } = getCredentials();
+        return `${baseUrl}/api/v1/athlete/${athleteId}${path}`;
+    }
 
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                credentials: 'include',
-            });
-
-            const result = await response.text();
-            console.log(`:oauth :intervals :connnect`);
+    // "Connect" = save API key + athlete ID
+    function connect(apiKey, athleteId) {
+        if(apiKey && athleteId) {
+            apiKeyStore.set(apiKey);
+            athleteIdStore.set(athleteId);
             xf.dispatch(`services`, {intervals: true});
-            clearParams();
-        } catch (e) {
-            console.log(``, e);
+            console.log(`:intervals :connect :success`);
         }
     }
 
-    function clearParams() {
-        window.history.pushState({}, document.title, window.location.pathname);
+    function disconnect() {
+        apiKeyStore.set('');
+        athleteIdStore.set('');
+        xf.dispatch(`services`, {intervals: false});
+        console.log(`:intervals :disconnect`);
     }
 
+    // No-op: OAuth params no longer needed
+    async function paramsHandler(args = {}) {}
+
+    function update() {}
+
     async function uploadWorkout(record) {
+        if(!isConnected()) return ':fail';
+
         const blob = record.blob;
         const workoutName = record.summary?.name ?? 'Powered by Auuki workout';
-        const url = `${api_uri}/api/intervals/upload`;
+        const url = athleteUrl('/activities') + '?' +
+              new URLSearchParams({ name: workoutName }).toString();
 
         const formData = new FormData();
         formData.append('file', blob);
-        formData.append('name', workoutName);
 
         try {
             const response = await fetch(url, {
                 method: 'POST',
-                credentials: 'include',
+                headers: authHeaders(),
                 body: formData,
             });
 
             if(response.ok) {
                 return ':success';
             } else {
-                if(response.status === 403) {
-                    console.log(`:api :no-auth`);
-                    xf.dispatch('action:auth', ':password:login');
-
+                if(response.status === 401 || response.status === 403) {
+                    console.log(`:intervals :no-auth`);
                     xf.dispatch('ui:modal:error:open', DialogMsg.noAuth);
                 }
                 return ':fail';
@@ -126,62 +88,20 @@ function Intervals(args = {}) {
         }
     }
 
-    /*
-    async function wod() {
-        const oldest = isoDate();
-        const newest = isoDate();
-
-        const url = `${api_uri}/api/intervals/events` +
-              '?' +
-              new URLSearchParams({
-                  oldest,
-                  newest,
-              })
-              .toString();
-
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                credentials: 'include',
-            });
-
-            if(response.ok) {
-                const data = await response.json();
-                xf.dispatch('action:planned', ':intervals:wod:success');
-                console.log(data);
-                return data.filter((item) => exists(item.workout_file_base64));
-            } else {
-                xf.dispatch('action:planned', ':intervals:wod:fail');
-                if(response.status === 403) {
-                    console.log(`:api :no-auth`);
-                    xf.dispatch('action:auth', ':password:login');
-                    xf.dispatch('ui:modal:error:open', DialogMsg.noAuth);
-                }
-                return [];
-            }
-        } catch(error) {
+    // GET /api/v1/athlete/{id}/events?oldest=...&newest=...
+    async function wod(oldest = isoDate(), newest = isoDate()) {
+        if(!isConnected()) {
             xf.dispatch('action:planned', ':intervals:wod:fail');
-            console.log(error);
             return [];
         }
-    }
-    */
 
-    // String, String -> Void
-    // "", ""
-    async function wod(oldest = isoDate(), newest = isoDate()) {
-        const url = `${api_uri}/api/intervals/events` +
-              '?' +
-              new URLSearchParams({
-                  oldest,
-                  newest,
-              })
-              .toString();
+        const url = athleteUrl('/events') + '?' +
+              new URLSearchParams({ oldest, newest }).toString();
 
         try {
             const response = await fetch(url, {
-                method: 'POST',
-                credentials: 'include',
+                method: 'GET',
+                headers: authHeaders(),
             });
 
             if(response.ok) {
@@ -191,9 +111,8 @@ function Intervals(args = {}) {
                 return data.filter((item) => exists(item.workout_file_base64));
             } else {
                 xf.dispatch('action:planned', ':intervals:wod:fail');
-                if(response.status === 403) {
-                    console.log(`:api :no-auth`);
-                    xf.dispatch('action:auth', ':password:login');
+                if(response.status === 401 || response.status === 403) {
+                    console.log(`:intervals :no-auth`);
                     xf.dispatch('ui:modal:error:open', DialogMsg.noAuth);
                 }
                 return [];
@@ -228,21 +147,6 @@ function Intervals(args = {}) {
         return body;
     }
 
-
-    // {
-    //     weight: Int,
-    //     icu_weight: Int,
-    //     icu_weight_sync: String,
-    //     sportSettings: [{
-    //         types: [String],
-    //         ftp: Int,
-    //         indoor_ftp: Int,
-    //         lthr: Int,
-    //         max_hr: Int,
-    //     }]
-    // }
-    // ->
-    // { weight: Int, ftp: Int }
     function athleteToSettings(athlete = {}, defaults = {weight: 0, ftp: 0}) {
         const sportSettings = athlete.sportSettings ?? [];
         const weight = athlete.weight ?? athlete.icu_weight ?? defaults.weight;
@@ -276,31 +180,19 @@ function Intervals(args = {}) {
         return {weight, ftp};
     }
 
+    // GET /api/v1/athlete/{id}
     async function getAthlete() {
-        // GET /api/v1/athlete/{id}
-        //
-        // Weight is icu_weight (in kg).
-        // The FTP is per sport (sportSettings array).
-        // Search for one with types field containing ‘Ride’ or ‘VirtualRide’.
-        // Then check ‘indoor_ftp’ (might be null) and ‘ftp’.
-        // {
-        //     weight: Int,
-        //     icu_weight: Int,
-        //     icu_weight_sync: String,
-        //     sportSettings: [{
-        //         types: [String]
-        //         ftp: Int,
-        //         indoor_ftp: Int,
-        //         lthr: Int,
-        //         max_hr: Int,
-        //     }]
-        // }
-        const url = `${api_uri}/api/intervals/athlete`;
+        if(!isConnected()) {
+            xf.dispatch('action:athlete', ':intervals:athlete:fail');
+            return athleteToSettings();
+        }
+
+        const url = athleteUrl('');
 
         try {
             const response = await fetch(url, {
-                method: 'POST',
-                credentials: 'include',
+                method: 'GET',
+                headers: authHeaders(),
             });
 
             if(response.ok) {
@@ -310,9 +202,8 @@ function Intervals(args = {}) {
                 return athleteToSettings(data);
             } else {
                 xf.dispatch('action:athlete', ':intervals:athlete:fail');
-                if(response.status === 403) {
-                    console.log(`:api :no-auth`);
-                    xf.dispatch('action:auth', ':password:login');
+                if(response.status === 401 || response.status === 403) {
+                    console.log(`:intervals :no-auth`);
                     xf.dispatch('ui:modal:error:open', DialogMsg.noAuth);
                 }
                 return athleteToSettings();
@@ -333,6 +224,7 @@ function Intervals(args = {}) {
         wod,
         getAthlete,
         athleteToSettings,
+        isConnected,
 
         wodMock,
     });
@@ -341,4 +233,3 @@ function Intervals(args = {}) {
 const intervals = Intervals();
 
 export default intervals;
-
