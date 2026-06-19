@@ -1360,6 +1360,32 @@ class PropInterval {
     }
 }
 
+class RollingAvg {
+    constructor(args = {}) {
+        this.prop   = args.prop;
+        this.effect = args.effect;
+        this.size   = args.size ?? 60;
+        this.buffer = [];
+        this.state  = 0;
+        this.start();
+    }
+    start() {
+        this.abortController = new AbortController();
+        this.signal = { signal: this.abortController.signal };
+        xf.sub(`${this.prop}`, this.onUpdate.bind(this), this.signal);
+    }
+    onUpdate(value) {
+        if(value <= 0) return;
+        this.buffer.push(value);
+        if(this.buffer.length > this.size) {
+            this.buffer.shift();
+        }
+        const sum = this.buffer.reduce((a, b) => a + b, 0);
+        this.state = Math.round(sum / this.buffer.length);
+        xf.dispatch(`${this.effect}`, this.state);
+    }
+}
+
 class PowerInZone {
     constructor(args = {}) {
         const self = this;
@@ -1606,6 +1632,7 @@ const dataTileSwitch = new DataTileSwitch({prop: 'dataTileSwitch', storage: Loca
 const power1s = new PropInterval({prop: 'db:power', effect: 'power1s', interval: 1000});
 const power3s = new PropInterval({prop: 'db:power', effect: 'power3s', interval: 3000});
 const powerInZone = new PowerInZone({ftpModel: ftp});
+const heartRate60s = new RollingAvg({prop: 'db:heartRate', effect: 'heartRate60s', size: 60});
 
 const activity = new Activity({prop: 'activity', api: api});
 const workout = new Workout({prop: 'workout', api: api});

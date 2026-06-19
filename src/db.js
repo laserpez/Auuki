@@ -47,6 +47,7 @@ let db = {
     heartRateAvgCount: models.heartRateAvg.count,
 
     heartRateMax: 0,
+    heartRate60s: 0,
 
     // Targets
     powerTarget: models.powerTarget.default,
@@ -126,6 +127,10 @@ xf.reg(models.heartRate.prop, (heartRate, db) => {
 
 xf.reg('rrInterval', (rrInterval, db) => {
     db.rrInterval = rrInterval;
+});
+
+xf.reg('heartRate60s', (value, db) => {
+    db.heartRate60s = value;
 });
 
 xf.reg(models.power.prop, (power, db) => {
