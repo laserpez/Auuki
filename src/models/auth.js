@@ -318,7 +318,7 @@ function Auth(args = {}) {
                     removeTurnstile();
                 }
 
-                xf.dispatch('action:auth', ':no-api');
+                xf.dispatch('action:auth', ':password:profile');
                 return {strava: false, intervals: false, trainingPeaks: false};
             }
 
@@ -331,7 +331,7 @@ function Auth(args = {}) {
                 removeTurnstile();
             }
 
-            xf.dispatch('action:auth', ':no-api');
+            xf.dispatch('action:auth', ':password:profile');
             return {strava: false, intervals: false, trainingPeaks: false};
         }
     }
