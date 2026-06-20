@@ -184,12 +184,10 @@ class WorkoutListItem extends HTMLElement {
         if(e.target.classList.contains('workout--options')) {
             return;
         }
-        if(this.isExpanded) {
-            this.collapse();
-        } else {
-            xf.dispatch('ui:workout:expand', this.id);
-            this.expand();
+        if(e.target.classList.contains('workout--select') || this.selectBtn.contains(e.target)) {
+            return;
         }
+        this.onRadio(e);
     }
     expand() {
         this.description.style.display = 'block';
@@ -208,8 +206,8 @@ class WorkoutListItem extends HTMLElement {
         if(equals(this.id, id)) {
             if(!this.isSelected) {
                 this.select();
-                this.expand();
             }
+            this.expand();
         } else {
             this.diselect();
         }
