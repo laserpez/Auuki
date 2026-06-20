@@ -284,6 +284,23 @@ class PowerTargetStep extends Model {
     }
 }
 
+class RollingAvgSize extends Model {
+    postInit(args = {}) {
+        const storageModel = {
+            key: this.prop,
+            fallback: this.defaultValue(),
+            parse: parseInt,
+        };
+        this.min = 30;
+        this.max = 300;
+        this.storage = args.storage(storageModel);
+    }
+    defaultValue() { return 60; }
+    defaultIsValid(value) {
+        return Number.isInteger(value) && inRange(this.min, this.max, value);
+    }
+}
+
 class PowerTarget extends Target {
     postInit(args = {}) {
         this.min = existance(args.min, 0);
@@ -1386,6 +1403,12 @@ class RollingAvg {
         this.state  = 0;
         this.start();
     }
+    setSize(size) {
+        this.size = size;
+        while(this.buffer.length > this.size) {
+            this.buffer.shift();
+        }
+    }
     start() {
         this.abortController = new AbortController();
         this.signal = { signal: this.abortController.signal };
@@ -1397,6 +1420,7 @@ class RollingAvg {
         if(this.buffer.length > this.size) {
             this.buffer.shift();
         }
+        if(this.buffer.length < this.size) return;
         const sum = this.buffer.reduce((a, b) => a + b, 0);
         this.state = Math.round(sum / this.buffer.length);
         xf.dispatch(`${this.effect}`, this.state);
@@ -1651,6 +1675,7 @@ const power1s = new PropInterval({prop: 'db:power', effect: 'power1s', interval:
 const power3s = new PropInterval({prop: 'db:power', effect: 'power3s', interval: 3000});
 const powerInZone = new PowerInZone({ftpModel: ftp});
 const heartRate60s = new RollingAvg({prop: 'db:heartRate', effect: 'heartRate60s', size: 60});
+const rollingAvgSize = new RollingAvgSize({prop: 'rollingAvgSize', storage: LocalStorageItem});
 
 const activity = new Activity({prop: 'activity', api: api});
 const workout = new Workout({prop: 'workout', api: api});
@@ -1685,6 +1710,8 @@ let models = {
 
     powerTarget,
     powerTargetStep,
+    rollingAvgSize,
+    heartRate60s,
     resistanceTarget,
     slopeTarget,
     cadenceTarget,

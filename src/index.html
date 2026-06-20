@@ -982,6 +982,23 @@
                                     effect="powerTargetStep-set"
                                     prop="powerTargetStep">Set</button>
                         </div>
+                        <div id="rolling-avg-settings" class="settings-tile">
+                            <label for="rolling-avg-value" class="settings-tile--label">HR Avg Window (s)</label>
+                            <input is="int-input"
+                                id="rolling-avg-value"
+                                class="settings-tile--input"
+                                name="rolling-avg-value"
+                                type="number"
+                                value="60"
+                                prop="rollingAvgSize"
+                                effect="rollingAvgSize-set" />
+                            <button is="set-button"
+                                    id="rolling-avg-btn"
+                                    class="settings-tile--btn flat-btn"
+                                    default="60"
+                                    effect="rollingAvgSize-set"
+                                    prop="rollingAvgSize">Set</button>
+                        </div>
                     </div>
                     <div class="settings-btn-row">
 

@@ -52,6 +52,7 @@ let db = {
     // Targets
     powerTarget: models.powerTarget.default,
     powerTargetStep: models.powerTargetStep.default,
+    rollingAvgSize: models.rollingAvgSize.default,
     bias: 100,
     resistanceTarget: models.resistanceTarget.default,
     slopeTarget: models.slopeTarget.default,
@@ -260,6 +261,11 @@ xf.reg('ui:powerTargetStep-set', (step, db) => {
     db.powerTargetStep = models.powerTargetStep.set(step);
     models.powerTargetStep.storage.set(db.powerTargetStep);
 });
+xf.reg('ui:rollingAvgSize-set', (size, db) => {
+    db.rollingAvgSize = models.rollingAvgSize.set(size);
+    models.rollingAvgSize.storage.set(db.rollingAvgSize);
+    models.heartRate60s.setSize(db.rollingAvgSize);
+});
 xf.reg('ui:power-target-inc', (_, db) => {
     db.powerTarget = models.powerTarget.set(db.powerTarget + db.powerTargetStep);
 });
@@ -444,6 +450,8 @@ xf.reg('app:start', async function(_, db) {
 
     db.ftp = models.ftp.set(models.ftp.restore());
     db.powerTargetStep = models.powerTargetStep.set(models.powerTargetStep.restore());
+    db.rollingAvgSize = models.rollingAvgSize.set(models.rollingAvgSize.restore());
+    models.heartRate60s.setSize(db.rollingAvgSize);
     db.weight = models.weight.set(models.weight.restore());
     db.theme = models.theme.set(models.theme.restore());
     db.measurement = models.measurement.set(models.measurement.restore());
