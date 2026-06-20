@@ -736,15 +736,53 @@ class Workout extends Model {
         return zwo.readToInterval(result);
     }
     fromIntervalsEvent(event) {
-        const workout = this.parse(atob(event.workout_file_base64));
+        let workout;
+        if(exists(event.workout_file_base64)) {
+            workout = this.parse(atob(event.workout_file_base64));
+        } else if(exists(event.workout_doc)) {
+            workout = this.fromWorkoutDoc(event);
+        } else {
+            return null;
+        }
         workout.meta.planned = true;
         workout.meta.startDateLocal = event.start_date_local;
         workout.id = uuid();
         workout.intervals_id = event.id;
         return workout;
     }
+    fromWorkoutDoc(event) {
+        const doc = event.workout_doc;
+        const steps = doc.steps ?? [];
+        let totalDuration = 0;
+        const intervals = steps.map(step => {
+            const duration = step.duration ?? 0;
+            totalDuration += duration;
+            const s = { duration };
+            if(exists(step.power)) {
+                s.power = step.power.units === '%ftp'
+                    ? step.power.value / 100
+                    : step.power.value;
+            }
+            if(exists(step.cadence)) {
+                s.cadence = step.cadence.value ?? step.cadence.start ?? step.cadence;
+            }
+            return { duration, steps: [s] };
+        });
+        return {
+            meta: {
+                name: event.name ?? '',
+                duration: totalDuration,
+                author: '',
+                category: '',
+                subcategory: '',
+                sportType: 'bike',
+                description: event.description ?? '',
+            },
+            intervals,
+        };
+    }
     fromIntervalsResponse(response) {
-        return response.map(this.fromIntervalsEvent.bind(this));
+        return response.map(this.fromIntervalsEvent.bind(this)).filter(x => x !== null);
     }
     async readFromFile(file) {
         const result = await fileHandler.read(file);

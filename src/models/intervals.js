@@ -108,7 +108,7 @@ function Intervals(args = {}) {
                 const data = await response.json();
                 xf.dispatch('action:planned', ':intervals:wod:success');
                 console.log(data);
-                return data.filter((item) => exists(item.workout_file_base64));
+                return data.filter((item) => exists(item.workout_file_base64) || exists(item.workout_doc));
             } else {
                 xf.dispatch('action:planned', ':intervals:wod:fail');
                 if(response.status === 401 || response.status === 403) {
