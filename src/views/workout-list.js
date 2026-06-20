@@ -165,6 +165,7 @@ class WorkoutListItem extends HTMLElement {
         this.viewPort = this.getViewPort();
 
         xf.sub('db:workout', this.onWorkout.bind(this), this.signal);
+        xf.sub('ui:workout:expand', this.onExpand.bind(this), this.signal);
         this.summary.addEventListener('pointerup', this.toggleExpand.bind(this), this.signal);
         this.optionsBtn.addEventListener('pointerup', this.toggleOptions.bind(this), this.signal);
         this.selectBtn.addEventListener('pointerup', this.onRadio.bind(this), this.signal);
@@ -186,6 +187,7 @@ class WorkoutListItem extends HTMLElement {
         if(this.isExpanded) {
             this.collapse();
         } else {
+            xf.dispatch('ui:workout:expand', this.id);
             this.expand();
         }
     }
@@ -196,6 +198,11 @@ class WorkoutListItem extends HTMLElement {
     collapse() {
         this.description.style.display = 'none';
         this.isExpanded = false;
+    }
+    onExpand(id) {
+        if(this.id !== id && this.isExpanded) {
+            this.collapse();
+        }
     }
     toggleSelect(id) {
         if(equals(this.id, id)) {
