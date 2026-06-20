@@ -268,12 +268,24 @@ xf.reg(`ui:power-target-dec`, (_, db) => {
 });
 xf.reg('ui:bias-inc', (_, db) => {
     db.bias = db.bias + 1;
+    if(db.workoutStatus === 'started') {
+        const power = db.workout.intervals[db.intervalIndex].steps[db.stepIndex].power;
+        if(exists(power)) xf.dispatch('ui:power-target-set', Math.round(models.ftp.toAbsolute(power, db.ftp) * db.bias / 100));
+    }
 });
 xf.reg('ui:bias-dec', (_, db) => {
     db.bias = Math.max(0, db.bias - 1);
+    if(db.workoutStatus === 'started') {
+        const power = db.workout.intervals[db.intervalIndex].steps[db.stepIndex].power;
+        if(exists(power)) xf.dispatch('ui:power-target-set', Math.round(models.ftp.toAbsolute(power, db.ftp) * db.bias / 100));
+    }
 });
 xf.reg('ui:bias-set', (value, db) => {
     db.bias = Math.max(0, parseInt(value) || 100);
+    if(db.workoutStatus === 'started') {
+        const power = db.workout.intervals[db.intervalIndex].steps[db.stepIndex].power;
+        if(exists(power)) xf.dispatch('ui:power-target-set', Math.round(models.ftp.toAbsolute(power, db.ftp) * db.bias / 100));
+    }
 });
 xf.reg('ui:cadence-target-set', (cadenceTarget, db) => {
     db.cadenceTarget = models.cadenceTarget.set(cadenceTarget);
