@@ -96,7 +96,7 @@ function Intervals(args = {}) {
         }
 
         const url = athleteUrl('/events') + '?' +
-              new URLSearchParams({ oldest, newest }).toString();
+              new URLSearchParams({ oldest, newest, resolve: true }).toString();
 
         try {
             const response = await fetch(url, {
