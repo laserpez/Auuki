@@ -199,6 +199,33 @@ class IntervalTime extends DataView {
 
 customElements.define('interval-time', IntervalTime);
 
+class StepElapsedTime extends DataView {
+    getDefaults() {
+        return {
+            format: 'mm:ss',
+            prop:   'db:stepTime',
+        };
+    }
+    config() {
+        this.format = existance(this.getAttribute('format'), this.getDefaults().format);
+        this.stepDuration = 0;
+    }
+    subs() {
+        xf.sub('db:stepTime', this.onUpdate.bind(this), this.signal);
+        xf.sub('db:stepDuration', this.onStepDuration.bind(this), this.signal);
+    }
+    onStepDuration(value) {
+        this.stepDuration = value;
+        this.render();
+    }
+    transform(state) {
+        const elapsed = this.stepDuration - this.state;
+        return formatTime({value: elapsed, format: this.format, unit: 'seconds'});
+    }
+}
+
+customElements.define('step-elapsed-time', StepElapsedTime);
+
 class WorkoutTimeRemaining extends DataView {
     getDefaults() {
         return {
@@ -1910,6 +1937,7 @@ export {
 
     TimerTime,
     IntervalTime,
+    StepElapsedTime,
     CadenceValue,
     CadenceLapValue,
     CadenceAvgValue,
