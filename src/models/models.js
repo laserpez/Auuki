@@ -753,51 +753,51 @@ class Workout extends Model {
     fromWorkoutDoc(event) {
         const doc = event.workout_doc;
         const steps = doc.steps ?? [];
+        const timeDx = 5;
         let totalDuration = 0;
         const intervals = [];
+
+        function buildStep(raw) {
+            const dur = raw.duration ?? 0;
+            if(exists(raw.power) && exists(raw.power.start) && exists(raw.power.end)) {
+                // Ramp: decompose into micro-steps
+                const pStart = raw.power.units === '%ftp' ? raw.power.start / 100 : raw.power.start;
+                const pEnd = raw.power.units === '%ftp' ? raw.power.end / 100 : raw.power.end;
+                const count = Math.max(1, Math.floor(dur / timeDx));
+                const dx = count > 1 ? (pEnd - pStart) / (count - 1) : 0;
+                const microSteps = [];
+                for(let i = 0; i < count; i++) {
+                    const ms = { duration: timeDx, power: parseFloat((pStart + dx * i).toFixed(4)) };
+                    if(exists(raw.cadence)) ms.cadence = raw.cadence.value ?? raw.cadence.start ?? raw.cadence;
+                    microSteps.push(ms);
+                }
+                return { duration: dur, steps: microSteps };
+            }
+            const s = { duration: dur, power: 0 };
+            if(exists(raw.power)) {
+                if(exists(raw.power.value)) {
+                    s.power = raw.power.units === '%ftp' ? raw.power.value / 100 : raw.power.value;
+                } else if(exists(raw.power.start)) {
+                    s.power = raw.power.units === '%ftp' ? raw.power.start / 100 : raw.power.start;
+                }
+            }
+            if(exists(raw.cadence)) s.cadence = raw.cadence.value ?? raw.cadence.start ?? raw.cadence;
+            return { duration: dur, steps: [s] };
+        }
+
         for(const step of steps) {
             if(step.reps && step.reps > 1 && step.steps) {
                 for(let r = 0; r < step.reps; r++) {
                     for(const sub of step.steps) {
-                        const subDur = sub.duration ?? 0;
-                        totalDuration += subDur;
-                        const subStep = { duration: subDur, power: 0 };
-                        if(exists(sub.power)) {
-                            if(exists(sub.power.value)) {
-                                subStep.power = sub.power.units === '%ftp'
-                                    ? sub.power.value / 100
-                                    : sub.power.value;
-                            } else if(exists(sub.power.start)) {
-                                subStep.power = sub.power.units === '%ftp'
-                                    ? sub.power.start / 100
-                                    : sub.power.start;
-                            }
-                        }
-                        if(exists(sub.cadence)) {
-                            subStep.cadence = sub.cadence.value ?? sub.cadence.start ?? sub.cadence;
-                        }
-                        intervals.push({ duration: subDur, steps: [subStep] });
+                        const interval = buildStep(sub);
+                        totalDuration += interval.duration;
+                        intervals.push(interval);
                     }
                 }
             } else {
-                const duration = step.duration ?? 0;
-                totalDuration += duration;
-                const s = { duration, power: 0 };
-                if(exists(step.power)) {
-                    if(exists(step.power.value)) {
-                        s.power = step.power.units === '%ftp'
-                            ? step.power.value / 100
-                            : step.power.value;
-                    } else if(exists(step.power.start) && exists(step.power.end)) {
-                        s.power = step.power.units === '%ftp'
-                            ? step.power.start / 100
-                            : step.power.start;
-                    }
-                }
-                if(exists(step.cadence)) {
-                    s.cadence = step.cadence.value ?? step.cadence.start ?? step.cadence;
-                }
-                intervals.push({ duration, steps: [s] });
+                const interval = buildStep(step);
+                totalDuration += interval.duration;
+                intervals.push(interval);
             }
         }
         return {

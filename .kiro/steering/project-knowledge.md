@@ -28,8 +28,20 @@ PWA browser-based per indoor cycling. Frontend puro (HTML + JS vanilla, Web Comp
 
 - **PropInterval**: Media su intervallo temporale fisso (es. power1s = 1s, power3s = 3s). Accumula valori, li media allo scadere del timer, dispatcha il risultato.
 - **PropAccumulator**: Accumula valori fino a un evento di reset (lap, stop). Usato per heartRateAvg, powerLap, ecc.
-- **RollingAvg**: Buffer circolare a finestra fissa per medie mobili (es. heartRate60s = ultimi 60 campioni HR).
+- **RollingAvg**: Buffer circolare a finestra fissa per medie mobili (es. heartRate60s). Ha `setSize(n)` per resize dinamico. Non dispatcha finché buffer non è pieno.
 - **LocalStorageItem**: Wrapper per localStorage con chiave, fallback, validazione, parse/encode.
+- **Target** (e sottoclassi PowerTarget, ResistanceTarget, SlopeTarget): `inc(value)`, `dec(value)`, `set(value)` con clamp min/max.
+- **PowerTargetStep**: Configurabile (1-50W), persiste in localStorage, usato da inc/dec del power target.
+- **RollingAvgSize**: Configurabile (30-300s), persiste in localStorage, regola la finestra di heartRate60s.
+
+## Bias (workout intensity multiplier)
+
+- `db.bias` = percentuale (default 100, min 0, no max, step ±1%)
+- Applicato in `watch:stepIndex` handler: `ftp.toAbsolute(power, ftp) * bias / 100`
+- Quando bias cambia, i handler `ui:bias-inc/dec/set` ricalcolano il power target dallo step corrente
+- Si resetta a 100 su `workout:started`
+- Il workout graph hover applica bias al valore power mostrato
+- UI: controllo +/− sotto power target nel pannello ERG (BiasControl in data-views.js)
 
 ## Integrazione Intervals.icu
 
@@ -75,3 +87,22 @@ L'app originariamente dipendeva da `api.auuki.com` per auth e proxy OAuth. Ora p
 5. Se z-stack: registrare la chiave in `Sources.default` in `src/models/models.js`
 6. Bumpare la versione SW in `src/sw.js`
 7. Build con `npx parcel build`
+
+## Workflow per nuovi settings persistenti
+
+1. Creare classe Model con `storage`, `defaultValue()`, `defaultIsValid()` in `src/models/models.js`
+2. Istanziare con `LocalStorageItem`, esportare nell'oggetto `models`
+3. Aggiungere campo iniziale in `src/db.js`
+4. Aggiungere `xf.reg('ui:effect-set', ...)` con `storage.set()` in `src/db.js`
+5. Aggiungere restore in `app:start` handler in `src/db.js`
+6. Aggiungere HTML in settings tab: `<input is="int-input" prop="..." effect="..."/>` + `<button is="set-button" ...>`
+7. Bumpare SW e build
+
+## Watch.js — navigazione workout
+
+- `onTick()`: decrementa `lapTime` e `stepTime` durante workout, incrementa `lapTime` in modalità libera
+- `step()`: avanza allo step/intervallo successivo
+- `lap()`: salta all'intervallo successivo (skip forward)
+- `back()`: singolo press = restart intervallo corrente, doppio press (500ms) = intervallo precedente
+- `nextInterval()` / `nextStep()`: dispatchano durate e indici
+- `watch:stepIndex` handler in db: applica bias e dispatcha power/slope/cadence target
