@@ -830,6 +830,26 @@ class PowerTargetControl extends DataView {
 customElements.define('power-target-control', PowerTargetControl);
 
 
+class BiasControl extends PowerTargetControl {
+    setDefaults() {
+        this.prop = 'db:bias';
+        this.selectors = {
+            input: '#bias-input',
+            inc:   '#bias-inc',
+            dec:   '#bias-dec',
+        };
+        this.effects = {
+            inc: 'bias-inc',
+            dec: 'bias-dec',
+            set: 'bias-set',
+        };
+        this.parse = parseInt;
+    }
+}
+
+customElements.define('bias-control', BiasControl);
+
+
 class ResistanceTargetControl extends PowerTargetControl {
     setDefaults() {
         this.prop = 'db:resistanceTarget';

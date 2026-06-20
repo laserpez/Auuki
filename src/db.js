@@ -52,6 +52,7 @@ let db = {
     // Targets
     powerTarget: models.powerTarget.default,
     powerTargetStep: models.powerTargetStep.default,
+    bias: 100,
     resistanceTarget: models.resistanceTarget.default,
     slopeTarget: models.slopeTarget.default,
     cadenceTarget: models.cadenceTarget.default,
@@ -264,6 +265,15 @@ xf.reg('ui:power-target-inc', (_, db) => {
 });
 xf.reg(`ui:power-target-dec`, (_, db) => {
     db.powerTarget = models.powerTarget.set(db.powerTarget - db.powerTargetStep);
+});
+xf.reg('ui:bias-inc', (_, db) => {
+    db.bias = db.bias + 1;
+});
+xf.reg('ui:bias-dec', (_, db) => {
+    db.bias = Math.max(0, db.bias - 1);
+});
+xf.reg('ui:bias-set', (value, db) => {
+    db.bias = Math.max(0, parseInt(value) || 100);
 });
 xf.reg('ui:cadence-target-set', (cadenceTarget, db) => {
     db.cadenceTarget = models.cadenceTarget.set(cadenceTarget);

@@ -434,7 +434,7 @@ xf.reg('watch:stepIndex',     (index, db) => {
         xf.dispatch('ui:cadence-target-set', 0);
     }
     if(exists(powerTarget)) {
-        xf.dispatch('ui:power-target-set', models.ftp.toAbsolute(powerTarget, db.ftp));
+        xf.dispatch('ui:power-target-set', Math.round(models.ftp.toAbsolute(powerTarget, db.ftp) * db.bias / 100));
         if(!exists(slopeTarget) && !equals(db.mode, ControlMode.erg)) {
             xf.dispatch('ui:mode-set', ControlMode.erg);
         }
@@ -442,7 +442,7 @@ xf.reg('watch:stepIndex',     (index, db) => {
         xf.dispatch('ui:power-target-set', 0);
     }
 });
-xf.reg('workout:started', (x, db) => db.workoutStatus = 'started');
+xf.reg('workout:started', (x, db) => { db.workoutStatus = 'started'; db.bias = 100; });
 xf.reg('workout:stopped', (x, db) => db.workoutStatus = 'stopped');
 xf.reg('workout:done',    (x, db) => db.workoutStatus = 'done');
 xf.reg('watch:started',   (x, db) => {
