@@ -257,7 +257,11 @@ class PlannedListItem extends HTMLElement {
         // TODO: delete
     }
     onToggle() {
-        this.isExpanded ? this.collapse() : this.expand();
+        if(this.isExpanded) {
+            this.collapse();
+        } else {
+            this.onSelect();
+        }
     }
     onOptions() {
         this.isOptions ? this.hideOptions() : this.showOptions();
