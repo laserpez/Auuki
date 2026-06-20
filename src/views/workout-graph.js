@@ -118,6 +118,7 @@ class WorkoutGraph extends HTMLElement {
         this.viewPort = this.getViewPort();
         this.abortController = new AbortController();
         this.signal = { signal: self.abortController.signal };
+        this.bias = 100;
 
         this.debounced = {
             onWindowResize: debounce(
@@ -128,6 +129,7 @@ class WorkoutGraph extends HTMLElement {
 
         xf.sub(`db:workout`, this.onWorkout.bind(this), this.signal);
         xf.sub(`db:ftp`, this.onFTP.bind(this), this.signal);
+        xf.sub(`db:bias`, this.onBias.bind(this), this.signal);
 
         xf.sub('db:intervalIndex', this.onIntervalIndex.bind(this), this.signal);
         xf.sub('db:distance', this.onDistance.bind(this), this.signal);
@@ -158,6 +160,9 @@ class WorkoutGraph extends HTMLElement {
         this.ftp = value;
         if(exists(this.workout.intervals)) this.render();
     }
+    onBias(value) {
+        this.bias = value;
+    }
     onPage(page) {
         if(equals(page, 'home')) {
             const viewPort = this.getViewPort();
@@ -175,7 +180,8 @@ class WorkoutGraph extends HTMLElement {
         const self = this;
         const target = this.querySelector('.graph--bar:hover');
         if(exists(target)) {
-            const power        = target.getAttribute('power');
+            const rawPower     = target.getAttribute('power');
+            const power        = exists(rawPower) ? Math.round(rawPower * self.bias / 100) : rawPower;
             const cadence      = target.getAttribute('cadence');
             const slope        = target.getAttribute('slope');
             const duration     = target.getAttribute('duration');
