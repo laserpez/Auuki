@@ -214,6 +214,7 @@ class WorkoutListItem extends HTMLElement {
     diselect() {
         this.indicator.innerHTML = radioOff;
         this.isSelected = false;
+        this.collapse();
     }
     toggleOptions() {
         if(this.optionsActive) {
