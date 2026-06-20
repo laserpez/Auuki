@@ -250,6 +250,7 @@ class PlannedListItem extends HTMLElement {
     deselect() {
         this.$selectable.classList.remove('active');
         this.selected = false;
+        this.collapse();
     }
     onRemove() {
         console.log(`:remove`);
