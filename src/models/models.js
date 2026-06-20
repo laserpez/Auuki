@@ -754,24 +754,56 @@ class Workout extends Model {
         const doc = event.workout_doc;
         const steps = doc.steps ?? [];
         let totalDuration = 0;
-        const intervals = steps.map(step => {
-            const duration = step.duration ?? 0;
-            totalDuration += duration;
-            const s = { duration };
-            if(exists(step.power)) {
-                s.power = step.power.units === '%ftp'
-                    ? step.power.value / 100
-                    : step.power.value;
+        const intervals = [];
+        for(const step of steps) {
+            if(step.reps && step.reps > 1 && step.steps) {
+                for(let r = 0; r < step.reps; r++) {
+                    for(const sub of step.steps) {
+                        const subDur = sub.duration ?? 0;
+                        totalDuration += subDur;
+                        const subStep = { duration: subDur, power: 0 };
+                        if(exists(sub.power)) {
+                            if(exists(sub.power.value)) {
+                                subStep.power = sub.power.units === '%ftp'
+                                    ? sub.power.value / 100
+                                    : sub.power.value;
+                            } else if(exists(sub.power.start)) {
+                                subStep.power = sub.power.units === '%ftp'
+                                    ? sub.power.start / 100
+                                    : sub.power.start;
+                            }
+                        }
+                        if(exists(sub.cadence)) {
+                            subStep.cadence = sub.cadence.value ?? sub.cadence.start ?? sub.cadence;
+                        }
+                        intervals.push({ duration: subDur, steps: [subStep] });
+                    }
+                }
+            } else {
+                const duration = step.duration ?? 0;
+                totalDuration += duration;
+                const s = { duration, power: 0 };
+                if(exists(step.power)) {
+                    if(exists(step.power.value)) {
+                        s.power = step.power.units === '%ftp'
+                            ? step.power.value / 100
+                            : step.power.value;
+                    } else if(exists(step.power.start) && exists(step.power.end)) {
+                        s.power = step.power.units === '%ftp'
+                            ? step.power.start / 100
+                            : step.power.start;
+                    }
+                }
+                if(exists(step.cadence)) {
+                    s.cadence = step.cadence.value ?? step.cadence.start ?? step.cadence;
+                }
+                intervals.push({ duration, steps: [s] });
             }
-            if(exists(step.cadence)) {
-                s.cadence = step.cadence.value ?? step.cadence.start ?? step.cadence;
-            }
-            return { duration, steps: [s] };
-        });
+        }
         return {
             meta: {
                 name: event.name ?? '',
-                duration: totalDuration,
+                duration: totalDuration || doc.duration || 0,
                 author: '',
                 category: '',
                 subcategory: '',
