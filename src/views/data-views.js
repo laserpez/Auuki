@@ -406,16 +406,20 @@ class CadenceValue extends DataView {
     config() {
         this.target = 0;
         this.workoutStarted = false;
-        xf.sub('db:cadenceTarget', this.onTarget.bind(this));
-        xf.sub('db:workoutStatus', this.onWorkoutStatus.bind(this));
     }
-    onTarget(value) {
-        this.target = value;
-        this.applyColor();
-    }
-    onWorkoutStatus(value) {
-        this.workoutStarted = value === 'started';
-        this.applyColor();
+    subs() {
+        const self = this;
+        function onCadenceEvent(e) {
+            const db = e.detail.data;
+            self.target = db.cadenceTarget;
+            self.workoutStarted = db.workoutStatus === 'started';
+            const value = db.cadence;
+            if(self.shouldUpdate(value)) {
+                self.updateState(value);
+                self.render();
+            }
+        }
+        window.addEventListener('db:cadence', onCadenceEvent, this.signal);
     }
     applyColor() {
         if(!this.workoutStarted) {
