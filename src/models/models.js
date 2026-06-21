@@ -777,7 +777,7 @@ class Workout extends Model {
         function buildStep(raw) {
             const dur = raw.duration ?? 0;
             const cadRange = parseCadenceRange(raw.cadence);
-            if(exists(raw.power) && exists(raw.power.start) && exists(raw.power.end)) {
+            if(exists(raw.power) && exists(raw.power.start) && exists(raw.power.end) && raw.ramp) {
                 // Ramp: decompose into micro-steps
                 const pStart = raw.power.units === '%ftp' ? raw.power.start / 100 : raw.power.start;
                 const pEnd = raw.power.units === '%ftp' ? raw.power.end / 100 : raw.power.end;
@@ -795,6 +795,10 @@ class Workout extends Model {
             if(exists(raw.power)) {
                 if(exists(raw.power.value)) {
                     s.power = raw.power.units === '%ftp' ? raw.power.value / 100 : raw.power.value;
+                } else if(exists(raw.power.start) && exists(raw.power.end)) {
+                    // Range: use average
+                    const avg = (raw.power.start + raw.power.end) / 2;
+                    s.power = raw.power.units === '%ftp' ? avg / 100 : avg;
                 } else if(exists(raw.power.start)) {
                     s.power = raw.power.units === '%ftp' ? raw.power.start / 100 : raw.power.start;
                 }
