@@ -403,8 +403,38 @@ class CadenceValue extends DataView {
             prop: 'db:cadence',
         };
     }
-    transform(state) {
-        return Math.round(state);
+    config() {
+        this.target = 0;
+        this.workoutStarted = false;
+        xf.sub('db:cadenceTarget', this.onTarget.bind(this));
+        xf.sub('db:workoutStatus', this.onWorkoutStatus.bind(this));
+    }
+    onTarget(value) {
+        this.target = value;
+        this.applyColor();
+    }
+    onWorkoutStatus(value) {
+        this.workoutStarted = value === 'started';
+        this.applyColor();
+    }
+    applyColor() {
+        if(!this.workoutStarted) {
+            this.style.color = '';
+            return;
+        }
+        const t = this.target;
+        const c = this.state;
+        if(equals(t, 0) || !t) {
+            this.style.color = 'var(--zone-yellow)';
+        } else if(c >= t.min && c <= t.max) {
+            this.style.color = 'var(--zone-green)';
+        } else {
+            this.style.color = 'var(--zone-red)';
+        }
+    }
+    render() {
+        this.textContent = Math.round(this.state);
+        this.applyColor();
     }
 }
 
@@ -444,10 +474,8 @@ class CadenceTarget extends DataView {
         };
     }
     transform(state) {
-        if(equals(state, 0)) {
-            return '';
-        }
-
+        if(equals(state, 0)) return '';
+        if(typeof state === 'object') return `${state.min}-${state.max}`;
         return state;
     }
 }

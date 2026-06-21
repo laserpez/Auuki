@@ -60,8 +60,8 @@ class WorkoutGraphViewModel {
         const power = exists(powerStart) ? powerStart === powerEnd ?
               `${powerStart}W` : `${powerStart}-${powerEnd}W` : '';
 
-        const cadence = exists(cadenceStart) ? cadenceStart === cadenceEnd ?
-              `${cadenceStart}W` : `${cadenceStart}-${cadenceEnd}rpm` : '';
+        const cadence = exists(cadenceStart) ?
+              (typeof cadenceStart === 'object' ? `${cadenceStart.min}-${cadenceStart.max}rpm` : `${cadenceStart}rpm`) : '';
 
         const slope = exists(slopeStart) ? slopeStart === slopeEnd ?
               `${slopeStart}%` : `${slopeStart}-${slopeEnd}%` : '';

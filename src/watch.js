@@ -429,7 +429,11 @@ xf.reg('watch:stepIndex',     (index, db) => {
         xf.dispatch('ui:distance-target-set', distanceTarget);
     }
     if(exists(cadenceTarget)) {
-        xf.dispatch('ui:cadence-target-set', cadenceTarget);
+        if(typeof cadenceTarget === 'number') {
+            xf.dispatch('ui:cadence-target-set', {min: cadenceTarget - 5, max: cadenceTarget + 5});
+        } else {
+            xf.dispatch('ui:cadence-target-set', cadenceTarget);
+        }
     } else {
         xf.dispatch('ui:cadence-target-set', 0);
     }

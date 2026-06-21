@@ -51,6 +51,12 @@ Chiamate dirette (senza backend proxy) con Basic Auth:
 - Credenziali salvate in localStorage: `intervals-api-key`, `intervals-athlete-id`
 - Endpoints: `GET /events?oldest=&newest=` (calendario workout), `POST /activities` (upload .FIT), `GET /` (profilo atleta — peso, FTP)
 
+## Git workflow
+
+- **Mai fare rebase o squash** di commit già pushati. Causa force push.
+- Commit lineari e separati. Se serve riorganizzare, farlo PRIMA del push.
+- No `git rebase -i`, no `--amend` su commit pushati.
+
 ## Service Worker
 
 - File: `src/sw.js`

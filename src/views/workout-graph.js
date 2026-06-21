@@ -45,7 +45,7 @@ function Interval(acc, interval, width, ftp, powerMax, viewPort) {
         const infoTime = formatTime({value: duration, format: 'mm:ss'});
 
         const powerAttr    = exists(power)    ? `power="${power}"` : '';
-        const cadenceAttr  = exists(cadence)  ? `cadence="${cadence}"` : '';
+        const cadenceAttr  = exists(cadence)  ? `cadence="${typeof cadence === 'object' ? cadence.min + '-' + cadence.max : cadence}"` : '';
         const slopeAttr    = exists(slope)    ? `slope="${slope}"` : '';
         const durationAttr = exists(duration) ? `duration="${infoTime}"` : '';
 

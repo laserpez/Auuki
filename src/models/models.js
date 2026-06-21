@@ -337,6 +337,10 @@ class CadenceTarget extends Target {
         this.max = existance(args.max, 255);
         this.step = existance(args.step, 5);
     }
+    set(value) {
+        if(typeof value === 'object' && value !== null) return value;
+        return super.set(value);
+    }
     parse(value) { return parseInt(value); }
 }
 
@@ -700,6 +704,19 @@ class Activity extends Model {
 // - differentiate between Workout and Activity
 // - this model should hold methods related to working on a Workout as memeber of the
 //   workout list or as the current selected workout
+// Converts workout_doc cadence field to {min, max} or undefined
+function parseCadenceRange(cadence) {
+    if(!exists(cadence)) return undefined;
+    if(typeof cadence === 'number') return {min: cadence - 5, max: cadence + 5};
+    if(exists(cadence.start) && exists(cadence.end)) {
+        const lo = Math.min(cadence.start, cadence.end);
+        const hi = Math.max(cadence.start, cadence.end);
+        return {min: lo, max: hi};
+    }
+    if(exists(cadence.value)) return {min: cadence.value - 5, max: cadence.value + 5};
+    return undefined;
+}
+
 // - Activity is about the current active recording, session, and the list of actities
 //   which are just recorded data or .fit format, Workout is about .zwo format
 class Workout extends Model {
@@ -759,6 +776,7 @@ class Workout extends Model {
 
         function buildStep(raw) {
             const dur = raw.duration ?? 0;
+            const cadRange = parseCadenceRange(raw.cadence);
             if(exists(raw.power) && exists(raw.power.start) && exists(raw.power.end)) {
                 // Ramp: decompose into micro-steps
                 const pStart = raw.power.units === '%ftp' ? raw.power.start / 100 : raw.power.start;
@@ -768,7 +786,7 @@ class Workout extends Model {
                 const microSteps = [];
                 for(let i = 0; i < count; i++) {
                     const ms = { duration: timeDx, power: parseFloat((pStart + dx * i).toFixed(4)) };
-                    if(exists(raw.cadence)) ms.cadence = raw.cadence.value ?? raw.cadence.start ?? raw.cadence;
+                    if(cadRange) ms.cadence = cadRange;
                     microSteps.push(ms);
                 }
                 return { duration: dur, steps: microSteps };
@@ -781,7 +799,7 @@ class Workout extends Model {
                     s.power = raw.power.units === '%ftp' ? raw.power.start / 100 : raw.power.start;
                 }
             }
-            if(exists(raw.cadence)) s.cadence = raw.cadence.value ?? raw.cadence.start ?? raw.cadence;
+            if(cadRange) s.cadence = cadRange;
             return { duration: dur, steps: [s] };
         }
 
