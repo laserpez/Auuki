@@ -436,7 +436,7 @@ class FTP extends Model {
     zoneToColor(zone) {
         if(equals(zone, 'one'))   return '#636468';
         if(equals(zone, 'two'))   return '#328AFF';
-        if(equals(zone, 'thee'))  return '#44A5AB';
+        if(equals(zone, 'three'))  return '#44A5AB';
         if(equals(zone, 'four'))  return '#57C057';
         if(equals(zone, 'five'))  return '#F8C73A';
         if(equals(zone, 'six'))   return '#FF663A';
@@ -461,7 +461,6 @@ class FTP extends Model {
         } else {
             return zones[6];
         }
-        return zones[0];
     }
 }
 
