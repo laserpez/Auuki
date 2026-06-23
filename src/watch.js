@@ -428,11 +428,14 @@ xf.reg('watch:stepIndex',     (index, db) => {
     if(exists(distanceTarget)) {
         xf.dispatch('ui:distance-target-set', distanceTarget);
     }
-    if(exists(cadenceTarget)) {
+    if(exists(cadenceTarget) && cadenceTarget !== undefined) {
         if(typeof cadenceTarget === 'number') {
             xf.dispatch('ui:cadence-target-set', {min: cadenceTarget - 5, max: cadenceTarget + 5});
-        } else {
+        } else if(typeof cadenceTarget === 'object' && exists(cadenceTarget.min) && exists(cadenceTarget.max)) {
             xf.dispatch('ui:cadence-target-set', cadenceTarget);
+        } else {
+            console.warn(':watch :stepIndex :cadenceTarget :invalid-format', cadenceTarget);
+            xf.dispatch('ui:cadence-target-set', 0);
         }
     } else {
         xf.dispatch('ui:cadence-target-set', 0);

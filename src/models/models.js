@@ -337,9 +337,14 @@ class CadenceTarget extends Target {
         this.max = existance(args.max, 255);
         this.step = existance(args.step, 5);
     }
-    set(value) {
+    defaultSet(value) {
         if(typeof value === 'object' && value !== null) return value;
-        return super.set(value);
+        const self = this;
+        if(isNaN(value)) {
+            self.onInvalid(value);
+            return self.default;
+        }
+        return clamp(self.min, self.max, self.parse(value));
     }
     parse(value) { return parseInt(value); }
 }
