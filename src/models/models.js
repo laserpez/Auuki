@@ -401,9 +401,7 @@ class FTP extends Model {
     toAbsolute(value, ftp) {
         const self = this;
         if(value < self.minAbsValue) {
-            const roundedUpValue = Math.round(value * 100) / 100; // round up to second position after decimal point
-            const absolute = Math.round(roundedUpValue * (ftp ?? self.state));
-            return absolute;
+            return Math.round(value * (ftp ?? self.state));
         }
         return value;
     }
@@ -774,7 +772,7 @@ class Workout extends Model {
     fromWorkoutDoc(event) {
         const doc = event.workout_doc;
         const steps = doc.steps ?? [];
-        const timeDx = 5;
+        const timeDx = 1;
         let totalDuration = 0;
         const intervals = [];
 
