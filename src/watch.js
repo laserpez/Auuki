@@ -406,7 +406,7 @@ class Watch {
 }
 
 // These regs have access to the global db state and can mutate it
-xf.reg('watch:lapDuration',    (time, db) => db.intervalDuration = time);
+xf.reg('watch:intervalDuration', (time, db) => db.intervalDuration = time);
 xf.reg('watch:stepDuration',   (time, db) => db.stepDuration     = time);
 xf.reg('watch:lapTime',        (time, db) => db.lapTime          = time);
 xf.reg('watch:stepTime',       (time, db) => db.stepTime         = time);

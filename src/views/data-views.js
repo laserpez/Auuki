@@ -203,23 +203,23 @@ class StepElapsedTime extends DataView {
     getDefaults() {
         return {
             format: 'mm:ss',
-            prop:   'db:stepTime',
+            prop:   'db:lapTime',
         };
     }
     config() {
         this.format = existance(this.getAttribute('format'), this.getDefaults().format);
-        this.stepDuration = 0;
+        this.intervalDuration = 0;
     }
     subs() {
-        xf.sub('db:stepTime', this.onUpdate.bind(this), this.signal);
-        xf.sub('db:stepDuration', this.onStepDuration.bind(this), this.signal);
+        xf.sub('db:lapTime', this.onUpdate.bind(this), this.signal);
+        xf.sub('db:intervalDuration', this.onIntervalDuration.bind(this), this.signal);
     }
-    onStepDuration(value) {
-        this.stepDuration = value;
+    onIntervalDuration(value) {
+        this.intervalDuration = value;
         this.render();
     }
     transform(state) {
-        const elapsed = this.stepDuration - this.state;
+        const elapsed = Math.max(0, this.intervalDuration - this.state);
         return formatTime({value: elapsed, format: this.format, unit: 'seconds'});
     }
 }
