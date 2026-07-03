@@ -701,6 +701,16 @@ class PowerTarget extends DataView {
             prop: 'db:powerTarget',
         };
     }
+    transform(state) {
+        const power = Math.round(state);
+        const zone = models.ftp.powerToZone(power);
+        if(equals(zone.name, 'one')) {
+            this.style.removeProperty('color');
+        } else {
+            this.style = `color: ${models.ftp.zoneToColor(zone.name)}`;
+        }
+        return power;
+    }
 }
 
 customElements.define('power-target', PowerTarget);
@@ -962,8 +972,14 @@ class PowerValue extends DataView {
         xf.sub(`${this.prop}`, this.onUpdate.bind(this), this.signal);
     }
     transform(state) {
-        this.style = 'color: #F8C73A';
-        return Math.round(state);
+        const power = Math.round(state);
+        const zone = models.ftp.powerToZone(power);
+        if(equals(zone.name, 'one')) {
+            this.style.removeProperty('color');
+        } else {
+            this.style = `color: ${models.ftp.zoneToColor(zone.name)}`;
+        }
+        return power;
     }
 }
 
