@@ -5,7 +5,7 @@ import { idb } from './storage/idb.js';
 import { ControlMode, } from './ble/enums.js';
 import { TimerStatus, } from './activity/enums.js';
 
-// import { trainerMock } from './simulation-scripts.js';
+// import { trainerMock } from '../test/simulation-scripts.js';
 
 let db = {
     // Data Screen
@@ -48,6 +48,8 @@ let db = {
 
     heartRateMax: 0,
     heartRate60s: 0,
+    hrr: 0,
+    hrr60s: 0,
 
     // Targets
     powerTarget: models.powerTarget.default,
@@ -65,6 +67,8 @@ let db = {
     // Profile
     ftp: models.ftp.default,
     weight: models.weight.default,
+    hrMin: models.hrMin.default,
+    hrMax: models.hrMax.default,
     theme: models.theme.default,
     dockMode: models.dockMode.default,
     measurement: models.measurement.default,
@@ -126,6 +130,9 @@ xf.reg(models.heartRate.prop, (heartRate, db) => {
     if(heartRate > db.heartRateMax) {
         db.heartRateMax = heartRate;
     }
+
+    const range = db.hrMax - db.hrMin;
+    db.hrr = (range > 0) ? Math.round((heartRate - db.hrMin) / range * 100) : 0;
 });
 
 xf.reg('rrInterval', (rrInterval, db) => {
@@ -134,6 +141,10 @@ xf.reg('rrInterval', (rrInterval, db) => {
 
 xf.reg('heartRate60s', (value, db) => {
     db.heartRate60s = value;
+});
+
+xf.reg('hrr60s', (value, db) => {
+    db.hrr60s = value;
 });
 
 xf.reg(models.power.prop, (power, db) => {
@@ -265,6 +276,7 @@ xf.reg('ui:rollingAvgSize-set', (size, db) => {
     db.rollingAvgSize = models.rollingAvgSize.set(size);
     models.rollingAvgSize.storage.set(db.rollingAvgSize);
     models.heartRate60s.setSize(db.rollingAvgSize);
+    models.hrr60s.setSize(db.rollingAvgSize);
 });
 xf.reg('ui:power-target-inc', (_, db) => {
     db.powerTarget = models.powerTarget.set(db.powerTarget + db.powerTargetStep);
@@ -325,6 +337,14 @@ xf.reg('ui:ftp-set', (ftp, db) => {
 xf.reg('ui:weight-set', (weight, db) => {
     db.weight = models.weight.set(weight);
     models.weight.backup(db.weight);
+});
+xf.reg('ui:hrMin-set', (hrMin, db) => {
+    db.hrMin = models.hrMin.set(hrMin);
+    models.hrMin.backup(db.hrMin);
+});
+xf.reg('ui:hrMax-set', (hrMax, db) => {
+    db.hrMax = models.hrMax.set(hrMax);
+    models.hrMax.backup(db.hrMax);
 });
 xf.reg('ui:theme-switch', (_, db) => {
     db.theme = models.theme.switch(db.theme);
@@ -452,7 +472,10 @@ xf.reg('app:start', async function(_, db) {
     db.powerTargetStep = models.powerTargetStep.set(models.powerTargetStep.restore());
     db.rollingAvgSize = models.rollingAvgSize.set(models.rollingAvgSize.restore());
     models.heartRate60s.setSize(db.rollingAvgSize);
+    models.hrr60s.setSize(db.rollingAvgSize);
     db.weight = models.weight.set(models.weight.restore());
+    db.hrMin = models.hrMin.set(models.hrMin.restore());
+    db.hrMax = models.hrMax.set(models.hrMax.restore());
     db.theme = models.theme.set(models.theme.restore());
     db.measurement = models.measurement.set(models.measurement.restore());
     db.volume = models.volume.set(models.volume.restore());

@@ -467,6 +467,44 @@ class FTP extends Model {
     }
 }
 
+class HRMin extends Model {
+    postInit(args = {}) {
+        const self = this;
+        const storageModel = {
+            key: self.prop,
+            fallback: self.defaultValue(),
+            parse: parseInt,
+        };
+        self.min = existance(args.min, 30);
+        self.max = existance(args.max, 120);
+        self.storage = new args.storage(storageModel);
+    }
+    defaultValue() { return 50; }
+    defaultIsValid(value) {
+        const self = this;
+        return Number.isInteger(value) && inRange(self.min, self.max, value);
+    }
+}
+
+class HRMax extends Model {
+    postInit(args = {}) {
+        const self = this;
+        const storageModel = {
+            key: self.prop,
+            fallback: self.defaultValue(),
+            parse: parseInt,
+        };
+        self.min = existance(args.min, 100);
+        self.max = existance(args.max, 230);
+        self.storage = new args.storage(storageModel);
+    }
+    defaultValue() { return 190; }
+    defaultIsValid(value) {
+        const self = this;
+        return Number.isInteger(value) && inRange(self.min, self.max, value);
+    }
+}
+
 class Weight extends Model {
     postInit(args = {}) {
         const self = this;
@@ -1759,6 +1797,8 @@ const page = new Page({prop: 'page'});
 
 const ftp = new FTP({prop: 'ftp', storage: LocalStorageItem});
 const weight = new Weight({prop: 'weight', storage: LocalStorageItem});
+const hrMin = new HRMin({prop: 'hrMin', storage: LocalStorageItem});
+const hrMax = new HRMax({prop: 'hrMax', storage: LocalStorageItem});
 const theme = new Theme({prop: 'theme', storage: LocalStorageItem});
 const dockMode = new DockMode({prop: 'dockMode', storage: LocalStorageItem});
 const volume = new Volume({prop: 'volume', storage: LocalStorageItem});
@@ -1769,6 +1809,7 @@ const power1s = new PropInterval({prop: 'db:power', effect: 'power1s', interval:
 const power3s = new PropInterval({prop: 'db:power', effect: 'power3s', interval: 3000});
 const powerInZone = new PowerInZone({ftpModel: ftp});
 const heartRate60s = new RollingAvg({prop: 'db:heartRate', effect: 'heartRate60s', size: 60});
+const hrr60s = new RollingAvg({prop: 'db:hrr', effect: 'hrr60s', size: 60});
 const rollingAvgSize = new RollingAvgSize({prop: 'rollingAvgSize', storage: LocalStorageItem});
 
 const activity = new Activity({prop: 'activity', api: api});
@@ -1806,6 +1847,7 @@ let models = {
     powerTargetStep,
     rollingAvgSize,
     heartRate60s,
+    hrr60s,
     resistanceTarget,
     slopeTarget,
     cadenceTarget,
@@ -1814,6 +1856,8 @@ let models = {
     page,
     ftp,
     weight,
+    hrMin,
+    hrMax,
     dockMode,
     volume,
     theme,

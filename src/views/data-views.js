@@ -577,6 +577,32 @@ class HeartRate60sValue extends DataView {
 
 customElements.define('heart-rate-60s-value', HeartRate60sValue);
 
+class HrrValue extends DataView {
+    getDefaults() {
+        return {
+            prop: 'db:hrr',
+        };
+    }
+    transform(state) {
+        return state;
+    }
+}
+
+customElements.define('hrr-value', HrrValue);
+
+class Hrr60sValue extends DataView {
+    getDefaults() {
+        return {
+            prop: 'db:hrr60s',
+        };
+    }
+    transform(state) {
+        return Math.round(state);
+    }
+}
+
+customElements.define('hrr-60s-value', Hrr60sValue);
+
 class SmO2Value extends DataView {
     getDefaults() {
         return {

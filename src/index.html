@@ -159,6 +159,20 @@
                                                               class="data-tile--value">--</heart-rate-60s-value>
                                         </div>
                                     </z-stack-item>
+                                    <z-stack-item>
+                                        <h2 class="data-tile--heading">HRR%</h2>
+                                        <div class="data-tile--value-cont">
+                                            <hrr-value id="hrr-value"
+                                                       class="data-tile--value">--</hrr-value>
+                                        </div>
+                                    </z-stack-item>
+                                    <z-stack-item>
+                                        <h2 class="data-tile--heading">HRR% <data-view prop="db:rollingAvgSize">60</data-view>s Avg</h2>
+                                        <div class="data-tile--value-cont">
+                                            <hrr-60s-value id="hrr-60s-value"
+                                                           class="data-tile--value">--</hrr-60s-value>
+                                        </div>
+                                    </z-stack-item>
                                 </z-stack>
                             </div>
 
@@ -964,6 +978,40 @@
                                     default="75"
                                     effect="weight-set"
                                     prop="weight">Set</button>
+                        </div>
+                        <div id="hr-min-settings" class="settings-tile">
+                            <label for="hr-min-value" class="settings-tile--label">HR min</label>
+                            <input is="int-input"
+                                id="hr-min-value"
+                                class="settings-tile--input"
+                                name="hr-min-value"
+                                type="number"
+                                value="50"
+                                prop="hrMin"
+                                effect="hrMin-set" />
+                            <button is="set-button"
+                                    id="hr-min-btn"
+                                    class="settings-tile--btn flat-btn"
+                                    default="50"
+                                    effect="hrMin-set"
+                                    prop="hrMin">Set</button>
+                        </div>
+                        <div id="hr-max-settings" class="settings-tile">
+                            <label for="hr-max-value" class="settings-tile--label">HR max</label>
+                            <input is="int-input"
+                                id="hr-max-value"
+                                class="settings-tile--input"
+                                name="hr-max-value"
+                                type="number"
+                                value="190"
+                                prop="hrMax"
+                                effect="hrMax-set" />
+                            <button is="set-button"
+                                    id="hr-max-btn"
+                                    class="settings-tile--btn flat-btn"
+                                    default="190"
+                                    effect="hrMax-set"
+                                    prop="hrMax">Set</button>
                         </div>
                         <div id="power-step-settings" class="settings-tile">
                             <label for="power-step-value" class="settings-tile--label">Power Step</label>
