@@ -1929,6 +1929,7 @@ navigation-action {
 
 .settings-tiles--cont {
     display: flex;
+    flex-direction: column;
     max-width: var(--inner-max-width);
     margin: 0 auto;
 
@@ -1939,6 +1940,12 @@ navigation-action {
     --font-size--input: 3em;
     --height--label: 3em;
     --height--input: 1em;
+}
+
+.settings-tiles--row {
+    display: flex;
+    justify-content: center;
+    width: 100%;
 }
 
 .settings-tile {

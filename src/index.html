@@ -943,109 +943,113 @@
                 <!-- settings--sub-tab -->
                 <div id="view--settings-settings" class="sub-tab active">
                     <div class="settings-tiles--cont">
-                        <div id="ftp-settings" class="settings-tile">
-                            <label for="ftp-value" class="settings-tile--label">FTP</label>
-                            <input is="int-input"
-                                id="ftp-value"
-                                class="settings-tile--input"
-                                name="ftp-value"
-                                type="number"
-                                value="200"
-                                prop="ftp"
-                                effect="ftp-set" />
-                            <button is="set-button"
-                                    id="ftp-btn"
-                                    class="settings-tile--btn flat-btn"
-                                    default="200"
-                                    effect="ftp-set"
-                                    prop="ftp">Set</button>
+                        <div class="settings-tiles--row">
+                            <div id="ftp-settings" class="settings-tile">
+                                <label for="ftp-value" class="settings-tile--label">FTP</label>
+                                <input is="int-input"
+                                    id="ftp-value"
+                                    class="settings-tile--input"
+                                    name="ftp-value"
+                                    type="number"
+                                    value="200"
+                                    prop="ftp"
+                                    effect="ftp-set" />
+                                <button is="set-button"
+                                        id="ftp-btn"
+                                        class="settings-tile--btn flat-btn"
+                                        default="200"
+                                        effect="ftp-set"
+                                        prop="ftp">Set</button>
+                            </div>
+                            <div id="weight-settings" class="settings-tile">
+                                <label id="weight-label" for="weight-value" class="settings-tile--label">
+                                    <measurement-unit type="weight">kg</measurement-unit>
+                                </label>
+                                <input is="weight-input"
+                                    id="weight-value"
+                                    class="settings-tile--input"
+                                    name="weight-value"
+                                    type="number"
+                                    value="75"
+                                    prop="weight"
+                                    effect="weight-set" />
+                                <button is="set-button"
+                                        id="weight-btn"
+                                        class="settings-tile--btn flat-btn"
+                                        default="75"
+                                        effect="weight-set"
+                                        prop="weight">Set</button>
+                            </div>
+                            <div id="power-step-settings" class="settings-tile">
+                                <label for="power-step-value" class="settings-tile--label">Power Step</label>
+                                <input is="int-input"
+                                    id="power-step-value"
+                                    class="settings-tile--input"
+                                    name="power-step-value"
+                                    type="number"
+                                    value="10"
+                                    prop="powerTargetStep"
+                                    effect="powerTargetStep-set" />
+                                <button is="set-button"
+                                        id="power-step-btn"
+                                        class="settings-tile--btn flat-btn"
+                                        default="10"
+                                        effect="powerTargetStep-set"
+                                        prop="powerTargetStep">Set</button>
+                            </div>
                         </div>
-                        <div id="weight-settings" class="settings-tile">
-                            <label id="weight-label" for="weight-value" class="settings-tile--label">
-                                <measurement-unit type="weight">kg</measurement-unit>
-                            </label>
-                            <input is="weight-input"
-                                id="weight-value"
-                                class="settings-tile--input"
-                                name="weight-value"
-                                type="number"
-                                value="75"
-                                prop="weight"
-                                effect="weight-set" />
-                            <button is="set-button"
-                                    id="weight-btn"
-                                    class="settings-tile--btn flat-btn"
-                                    default="75"
-                                    effect="weight-set"
-                                    prop="weight">Set</button>
-                        </div>
-                        <div id="hr-min-settings" class="settings-tile">
-                            <label for="hr-min-value" class="settings-tile--label">HR min</label>
-                            <input is="int-input"
-                                id="hr-min-value"
-                                class="settings-tile--input"
-                                name="hr-min-value"
-                                type="number"
-                                value="50"
-                                prop="hrMin"
-                                effect="hrMin-set" />
-                            <button is="set-button"
-                                    id="hr-min-btn"
-                                    class="settings-tile--btn flat-btn"
-                                    default="50"
-                                    effect="hrMin-set"
-                                    prop="hrMin">Set</button>
-                        </div>
-                        <div id="hr-max-settings" class="settings-tile">
-                            <label for="hr-max-value" class="settings-tile--label">HR max</label>
-                            <input is="int-input"
-                                id="hr-max-value"
-                                class="settings-tile--input"
-                                name="hr-max-value"
-                                type="number"
-                                value="190"
-                                prop="hrMax"
-                                effect="hrMax-set" />
-                            <button is="set-button"
-                                    id="hr-max-btn"
-                                    class="settings-tile--btn flat-btn"
-                                    default="190"
-                                    effect="hrMax-set"
-                                    prop="hrMax">Set</button>
-                        </div>
-                        <div id="power-step-settings" class="settings-tile">
-                            <label for="power-step-value" class="settings-tile--label">Power Step</label>
-                            <input is="int-input"
-                                id="power-step-value"
-                                class="settings-tile--input"
-                                name="power-step-value"
-                                type="number"
-                                value="10"
-                                prop="powerTargetStep"
-                                effect="powerTargetStep-set" />
-                            <button is="set-button"
-                                    id="power-step-btn"
-                                    class="settings-tile--btn flat-btn"
-                                    default="10"
-                                    effect="powerTargetStep-set"
-                                    prop="powerTargetStep">Set</button>
-                        </div>
-                        <div id="rolling-avg-settings" class="settings-tile">
-                            <label for="rolling-avg-value" class="settings-tile--label">HR Avg Window (s)</label>
-                            <input is="int-input"
-                                id="rolling-avg-value"
-                                class="settings-tile--input"
-                                name="rolling-avg-value"
-                                type="number"
-                                value="60"
-                                prop="rollingAvgSize"
-                                effect="rollingAvgSize-set" />
-                            <button is="set-button"
-                                    id="rolling-avg-btn"
-                                    class="settings-tile--btn flat-btn"
-                                    default="60"
-                                    effect="rollingAvgSize-set"
-                                    prop="rollingAvgSize">Set</button>
+                        <div class="settings-tiles--row">
+                            <div id="hr-min-settings" class="settings-tile">
+                                <label for="hr-min-value" class="settings-tile--label">HR min</label>
+                                <input is="int-input"
+                                    id="hr-min-value"
+                                    class="settings-tile--input"
+                                    name="hr-min-value"
+                                    type="number"
+                                    value="50"
+                                    prop="hrMin"
+                                    effect="hrMin-set" />
+                                <button is="set-button"
+                                        id="hr-min-btn"
+                                        class="settings-tile--btn flat-btn"
+                                        default="50"
+                                        effect="hrMin-set"
+                                        prop="hrMin">Set</button>
+                            </div>
+                            <div id="hr-max-settings" class="settings-tile">
+                                <label for="hr-max-value" class="settings-tile--label">HR max</label>
+                                <input is="int-input"
+                                    id="hr-max-value"
+                                    class="settings-tile--input"
+                                    name="hr-max-value"
+                                    type="number"
+                                    value="190"
+                                    prop="hrMax"
+                                    effect="hrMax-set" />
+                                <button is="set-button"
+                                        id="hr-max-btn"
+                                        class="settings-tile--btn flat-btn"
+                                        default="190"
+                                        effect="hrMax-set"
+                                        prop="hrMax">Set</button>
+                            </div>
+                            <div id="rolling-avg-settings" class="settings-tile">
+                                <label for="rolling-avg-value" class="settings-tile--label">HR Avg Window (s)</label>
+                                <input is="int-input"
+                                    id="rolling-avg-value"
+                                    class="settings-tile--input"
+                                    name="rolling-avg-value"
+                                    type="number"
+                                    value="60"
+                                    prop="rollingAvgSize"
+                                    effect="rollingAvgSize-set" />
+                                <button is="set-button"
+                                        id="rolling-avg-btn"
+                                        class="settings-tile--btn flat-btn"
+                                        default="60"
+                                        effect="rollingAvgSize-set"
+                                        prop="rollingAvgSize">Set</button>
+                            </div>
                         </div>
                     </div>
                     <div class="settings-btn-row">
