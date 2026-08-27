@@ -178,6 +178,10 @@ class Watch {
             stepTime     = self.intervals[0]?.steps[0].duration ?? 0;
 
             xf.dispatch('watch:intervalIndex',  0);
+
+            // a fresh workout drops any manual mode override from a previous run
+            xf.dispatch('ui:mode-override-reset');
+
             xf.dispatch('watch:stepIndex', 0);
 
             xf.dispatch('workout:started');
@@ -422,7 +426,7 @@ xf.reg('watch:stepIndex',     (index, db) => {
     if(exists(slopeTarget)) {
         xf.dispatch('ui:slope-target-set', slopeTarget);
         if(!equals(db.mode, ControlMode.sim)) {
-            xf.dispatch('ui:mode-set', ControlMode.sim);
+            xf.dispatch('watch:mode-set', ControlMode.sim);
         }
     }
     if(exists(distanceTarget)) {
@@ -443,7 +447,7 @@ xf.reg('watch:stepIndex',     (index, db) => {
     if(exists(powerTarget)) {
         xf.dispatch('ui:power-target-set', Math.round(models.ftp.toAbsolute(powerTarget, db.ftp) * db.bias / 100));
         if(!exists(slopeTarget) && !equals(db.mode, ControlMode.erg)) {
-            xf.dispatch('ui:mode-set', ControlMode.erg);
+            xf.dispatch('watch:mode-set', ControlMode.erg);
         }
     } else {
         xf.dispatch('ui:power-target-set', 0);

@@ -61,6 +61,7 @@ let db = {
     cadenceTarget: models.cadenceTarget.default,
 
     mode: models.mode.default,
+    modeOverride: false,
     page: models.page.default,
     lock: false,
 
@@ -233,9 +234,7 @@ xf.reg('ui:page-set', (page, db) => {
 });
 
 // Modes
-xf.reg('ui:mode-set', (mode, db) => {
-    if(db.lock) return;
-
+function applyMode(mode, db) {
     db.mode = models.mode.set(mode);
 
     if(equals(mode, ControlMode.erg)) {
@@ -247,6 +246,29 @@ xf.reg('ui:mode-set', (mode, db) => {
     if(equals(mode, ControlMode.sim)) {
         xf.dispatch(`ui:slope-target-set`, db.slopeTarget);
     }
+}
+
+// User-driven mode change. Marks a manual override so the workout
+// engine won't automatically revert the mode on the next step.
+xf.reg('ui:mode-set', (mode, db) => {
+    if(db.lock) return;
+
+    db.modeOverride = true;
+    applyMode(mode, db);
+});
+
+// Workout-driven mode change (from watch:stepIndex). Skipped once the
+// user has manually overridden the mode during the current workout.
+xf.reg('watch:mode-set', (mode, db) => {
+    if(db.lock) return;
+    if(db.modeOverride) return;
+
+    applyMode(mode, db);
+});
+
+// Reset the manual override, e.g. when a new workout starts.
+xf.reg('ui:mode-override-reset', (_, db) => {
+    db.modeOverride = false;
 });
 
 xf.reg('ui:lock-set', (_, db) => {
