@@ -68,7 +68,7 @@ test/                 # Mirror di src/ — jest + babel
 - Mai usare `class` per logica di business (solo per Web Components e Model base).
 - Mai mutare stato al di fuori di un handler `xf.reg`.
 - Mai fare rebase, squash, o amend di commit già pushati. Mai force push.
-- Mai saltare l'increment della versione SW dopo modifiche a `src/`.
+- Mai bumpare `cacheName` in `src/sw.js` a mano: lo fa l'hook `.claude/hooks/sw-bump.sh` al `git commit` quando cambia `src/`.
 - Mai creare file README, CHANGELOG, o documentazione non richiesta.
 - Mai aggiungere test se non richiesto esplicitamente.
 - Mai usare `var`. Usare `const` di default, `let` solo se necessario.
@@ -79,10 +79,9 @@ test/                 # Mirror di src/ — jest + babel
 
 1. Il codice compila senza errori: `npx parcel build` deve terminare con successo.
 2. I test esistenti passano: `npx jest` non deve introdurre regressioni.
-3. Se si modifica un file sotto `src/`, bumpare `cacheName` in `src/sw.js` (incrementare il numero in `'Flux-vNNN'`).
-4. Ogni nuovo campo dati segue il flusso completo: parser → dispatch → `xf.reg` in db.js → consumo in models/views.
-5. Nuovi Web Components di visualizzazione estendono `DataView` o seguono lo stesso pattern.
-6. Nuovi settings persistenti usano `LocalStorageItem` + restore in `app:start`.
+3. Ogni nuovo campo dati segue il flusso completo: parser → dispatch → `xf.reg` in db.js → consumo in models/views.
+4. Nuovi Web Components di visualizzazione estendono `DataView` o seguono lo stesso pattern.
+5. Nuovi settings persistenti usano `LocalStorageItem` + restore in `app:start`.
 
 ## Standard di review
 
