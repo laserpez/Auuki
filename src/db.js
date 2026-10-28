@@ -48,8 +48,8 @@ let db = {
 
     heartRateMax: 0,
     heartRate60s: 0,
-    hrr: 0,
-    hrr60s: 0,
+    hrMaxPct: 0,
+    hrMaxPct60s: 0,
 
     // Targets
     powerTarget: models.powerTarget.default,
@@ -132,8 +132,7 @@ xf.reg(models.heartRate.prop, (heartRate, db) => {
         db.heartRateMax = heartRate;
     }
 
-    const range = db.hrMax - db.hrMin;
-    db.hrr = (range > 0) ? Math.round((heartRate - db.hrMin) / range * 100) : 0;
+    db.hrMaxPct = (db.hrMax > 0) ? Math.round(heartRate / db.hrMax * 100) : 0;
 });
 
 xf.reg('rrInterval', (rrInterval, db) => {
@@ -144,8 +143,8 @@ xf.reg('heartRate60s', (value, db) => {
     db.heartRate60s = value;
 });
 
-xf.reg('hrr60s', (value, db) => {
-    db.hrr60s = value;
+xf.reg('hrMaxPct60s', (value, db) => {
+    db.hrMaxPct60s = value;
 });
 
 xf.reg(models.power.prop, (power, db) => {
@@ -298,7 +297,7 @@ xf.reg('ui:rollingAvgSize-set', (size, db) => {
     db.rollingAvgSize = models.rollingAvgSize.set(size);
     models.rollingAvgSize.storage.set(db.rollingAvgSize);
     models.heartRate60s.setSize(db.rollingAvgSize);
-    models.hrr60s.setSize(db.rollingAvgSize);
+    models.hrMaxPct60s.setSize(db.rollingAvgSize);
 });
 xf.reg('ui:power-target-inc', (_, db) => {
     db.powerTarget = models.powerTarget.set(db.powerTarget + db.powerTargetStep);
@@ -494,7 +493,7 @@ xf.reg('app:start', async function(_, db) {
     db.powerTargetStep = models.powerTargetStep.set(models.powerTargetStep.restore());
     db.rollingAvgSize = models.rollingAvgSize.set(models.rollingAvgSize.restore());
     models.heartRate60s.setSize(db.rollingAvgSize);
-    models.hrr60s.setSize(db.rollingAvgSize);
+    models.hrMaxPct60s.setSize(db.rollingAvgSize);
     db.weight = models.weight.set(models.weight.restore());
     db.hrMin = models.hrMin.set(models.hrMin.restore());
     db.hrMax = models.hrMax.set(models.hrMax.restore());

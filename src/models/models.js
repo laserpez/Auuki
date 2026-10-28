@@ -1809,7 +1809,7 @@ const power1s = new PropInterval({prop: 'db:power', effect: 'power1s', interval:
 const power3s = new PropInterval({prop: 'db:power', effect: 'power3s', interval: 3000});
 const powerInZone = new PowerInZone({ftpModel: ftp});
 const heartRate60s = new RollingAvg({prop: 'db:heartRate', effect: 'heartRate60s', size: 60});
-const hrr60s = new RollingAvg({prop: 'db:hrr', effect: 'hrr60s', size: 60});
+const hrMaxPct60s = new RollingAvg({prop: 'db:hrMaxPct', effect: 'hrMaxPct60s', size: 60});
 const rollingAvgSize = new RollingAvgSize({prop: 'rollingAvgSize', storage: LocalStorageItem});
 
 const activity = new Activity({prop: 'activity', api: api});
@@ -1847,7 +1847,7 @@ let models = {
     powerTargetStep,
     rollingAvgSize,
     heartRate60s,
-    hrr60s,
+    hrMaxPct60s,
     resistanceTarget,
     slopeTarget,
     cadenceTarget,

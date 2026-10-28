@@ -577,10 +577,10 @@ class HeartRate60sValue extends DataView {
 
 customElements.define('heart-rate-60s-value', HeartRate60sValue);
 
-class HrrValue extends DataView {
+class HrMaxPctValue extends DataView {
     getDefaults() {
         return {
-            prop: 'db:hrr',
+            prop: 'db:hrMaxPct',
         };
     }
     transform(state) {
@@ -588,12 +588,12 @@ class HrrValue extends DataView {
     }
 }
 
-customElements.define('hrr-value', HrrValue);
+customElements.define('hr-max-pct-value', HrMaxPctValue);
 
-class Hrr60sValue extends DataView {
+class HrMaxPct60sValue extends DataView {
     getDefaults() {
         return {
-            prop: 'db:hrr60s',
+            prop: 'db:hrMaxPct60s',
         };
     }
     transform(state) {
@@ -601,7 +601,7 @@ class Hrr60sValue extends DataView {
     }
 }
 
-customElements.define('hrr-60s-value', Hrr60sValue);
+customElements.define('hr-max-pct-60s-value', HrMaxPct60sValue);
 
 class SmO2Value extends DataView {
     getDefaults() {
