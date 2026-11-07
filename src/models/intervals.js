@@ -147,37 +147,35 @@ function Intervals(args = {}) {
         return body;
     }
 
-    function athleteToSettings(athlete = {}, defaults = {weight: 0, ftp: 0}) {
+    function athleteToSettings(athlete = {}, defaults = {weight: 0, ftp: 0, hrMax: 0}) {
         const sportSettings = athlete.sportSettings ?? [];
         const weight = athlete.weight ?? athlete.icu_weight ?? defaults.weight;
-        let ftp = defaults.ftp;
 
         let rideSetting;
         let virtualRideSetting;
 
         for(let sportSetting of sportSettings) {
-            const types = sportSetting.types;
+            const types = sportSetting.types ?? [];
 
             for(let type of types) {
-                if(type === "VirtualRide") {
+                if(type === 'VirtualRide') {
                     virtualRideSetting = sportSetting;
                 }
-                if(type === "Ride") {
+                if(type === 'Ride') {
                     rideSetting = sportSetting;
                 }
             }
         }
 
-        if(virtualRideSetting) {
-            ftp = virtualRideSetting.indoor_ftp ?? virtualRideSetting.ftp ?? defaults.ftp;
-            return {weight, ftp};
-        }
-        if(rideSetting) {
-            ftp = rideSetting.indoor_ftp ?? rideSetting.ftp ?? 0;
-            return {weight, ftp};
+        const setting = virtualRideSetting ?? rideSetting;
+
+        if(setting) {
+            const ftp = setting.indoor_ftp ?? setting.ftp ?? defaults.ftp;
+            const hrMax = setting.max_hr ?? defaults.hrMax;
+            return {weight, ftp, hrMax};
         }
 
-        return {weight, ftp};
+        return {weight, ftp: defaults.ftp, hrMax: defaults.hrMax};
     }
 
     // GET /api/v1/athlete/{id}

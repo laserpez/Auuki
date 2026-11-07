@@ -24,7 +24,7 @@ describe('athleteToSettings', () => {
         };
 
         expect(models.api.intervals.athleteToSettings(athlete))
-            .toEqual({weight: 75, ftp: 240,});
+            .toEqual({weight: 75, ftp: 240, hrMax: 193,});
     });
 
     test('Ride', () => {
@@ -42,7 +42,7 @@ describe('athleteToSettings', () => {
         };
 
         expect(models.api.intervals.athleteToSettings(athlete))
-            .toEqual({weight: 75, ftp: 240,});
+            .toEqual({weight: 75, ftp: 240, hrMax: 193,});
     });
 
     test('VirtualRide, Ride', () => {
@@ -67,7 +67,7 @@ describe('athleteToSettings', () => {
         };
 
         expect(models.api.intervals.athleteToSettings(athlete))
-            .toEqual({weight: 75, ftp: 240,});
+            .toEqual({weight: 75, ftp: 240, hrMax: 193,});
     });
 
     test('ftp undefined', () => {
@@ -85,7 +85,7 @@ describe('athleteToSettings', () => {
         };
 
         expect(models.api.intervals.athleteToSettings(athlete))
-            .toEqual({weight: 75, ftp: 0,});
+            .toEqual({weight: 75, ftp: 0, hrMax: 193,});
     });
 
     test('ftp undefined with defaults', () => {
@@ -103,12 +103,12 @@ describe('athleteToSettings', () => {
         };
 
         expect(models.api.intervals.athleteToSettings(athlete, {ftp: 240}))
-            .toEqual({weight: 75, ftp: 240,});
+            .toEqual({weight: 75, ftp: 240, hrMax: 193,});
     });
 
     test('athlete undefined', () => {
         expect(models.api.intervals.athleteToSettings(undefined))
-            .toEqual({weight: 0, ftp: 0,});
+            .toEqual({weight: 0, ftp: 0, hrMax: 0,});
     });
 });
 

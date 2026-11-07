@@ -1076,6 +1076,9 @@ class Planned {
             if(response.ftp > 0) {
                 xf.dispatch('ui:ftp-set', response.ftp);
             }
+            if(response.hrMax > 0) {
+                xf.dispatch('ui:hrMax-set', response.hrMax);
+            }
         }
     }
 }
