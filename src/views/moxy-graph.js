@@ -95,16 +95,19 @@ class MoxyGraph extends HTMLElement {
         }
 
         xf.sub(`${this.prop.elapsed}`, this.onElapsed.bind(this), this.signal);
-        window.addEventListener(`resize`, this.onResize.bind(this), this.signal);
+
+        // fires also when the page goes from display:none to visible
+        this.resizeObserver = new ResizeObserver(this.onResize.bind(this));
+        this.resizeObserver.observe(this.$cont);
     }
     disconnectedCallback() {
         this.abortController.abort();
+        this.resizeObserver?.disconnect();
     }
     calcWidth() {
-        return this.$cont.getBoundingClientRect()?.width ?? window.innerWidth;
+        return Math.floor(this.$cont.getBoundingClientRect()?.width ?? window.innerWidth);
     }
     onResize() {
-        // TODO: debounce
         this.width = this.calcWidth();
     }
     adjustYMinMaxFor(key, value) {
@@ -121,6 +124,9 @@ class MoxyGraph extends HTMLElement {
         }
     }
     onElapsed() {
+        // page hidden (display:none): keep the path untouched
+        if(this.width <= 0) return;
+
         // first calculate
         for(let key in this.path) {
             this.calcStep(key);
