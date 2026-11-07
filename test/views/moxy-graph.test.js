@@ -7,6 +7,16 @@ import { JSDOM } from 'jsdom';
 import { first, last, xf } from '../../src/functions.js';
 import { MoxyGraph } from '../../src/views/moxy-graph.js';
 
+// the element is not attached to the DOM in these tests,
+// so connectedCallback never creates the <polyline> elements
+function newMoxyGraph() {
+    const moxy = new MoxyGraph();
+    for(let key in moxy.Key) {
+        moxy.$path[key] = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+    }
+    return moxy;
+}
+
 describe('Moxy Graph View', () => {
 });
 
@@ -18,7 +28,7 @@ describe('Fill - Shift - Enlarge - Fill - Shift', () => {
         warn: console.warn,
     };
 
-    const moxy = new MoxyGraph();
+    const moxy = newMoxyGraph();
     moxy.width = 8;
 
     const power = [
@@ -226,7 +236,7 @@ describe('Fill - Shift - Enlarge - Fill - Shift', () => {
 
 describe('Fill - Shift - Shrink - Fill - Shift', () => {
 
-    const moxy = new MoxyGraph();
+    const moxy = newMoxyGraph();
     moxy.width = 12;
 
     const power = [

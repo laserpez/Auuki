@@ -2,7 +2,7 @@
 // Local Activity Encoder
 //
 
-import { first, last, empty, expect, } from '../functions.js';
+import { first, last, empty, exists, expect, } from '../functions.js';
 import { profiles } from './profiles/profiles.js';
 import productMessageDefinitions from './profiles/product-message-definitions.js';
 import { CRC } from './crc.js';
@@ -20,6 +20,32 @@ function LocalActivity(args = {}) {
               acc[d.name] = d;
               return acc;
           }, {});
+
+    // Sensor fields of the record message that are only written when
+    // the activity has data for them. The app fills them with 0 when
+    // the sensor is not connected, and 0 is not a valid measurement
+    // for any of them.
+    const optionalRecordFields = [
+        'total_hemoglobin_conc',
+        'saturated_hemoglobin_percent',
+        'core_temperature',
+    ];
+
+    // [Record] -> FITjs
+    function recordDefinitionFor(records = []) {
+        const hasData = (name) => records.some(
+            (record) => exists(record[name]) && record[name] !== 0
+        );
+        const [name, fields, localNumber] = productMessageDefinitions.find(
+            ([messageName]) => messageName === 'record'
+        );
+
+        return definitionRecord.toFITjs([
+            name,
+            fields.filter((field) => !optionalRecordFields.includes(field) || hasData(field)),
+            localNumber,
+        ]);
+    }
 
     // [FITjs] -> {fileSize: Int, dataSize: Int}
     function getSize(fitjs) {
@@ -300,6 +326,7 @@ function LocalActivity(args = {}) {
         const total_elapsed_time = calcTotalElapsedTime({records, laps, events});
         const total_timer_time = calcTotalTimerTime({records, events});
         const stats = calcStats({records, total_timer_time});
+        const recordDefinition = recordDefinitionFor(records);
 
         // structure: FITjs
         const structure = [
@@ -330,13 +357,13 @@ function LocalActivity(args = {}) {
             ),
 
             // definition record
-            definitions.record,
+            recordDefinition,
             // definition hrv
             definitions.hrv,
             // data record messages
             ...records.map((record) =>
                 dataRecord.toFITjs(
-                    record.time === undefined ? definitions.record : definitions.hrv,
+                    record.time === undefined ? recordDefinition : definitions.hrv,
                     record
                 )
             ),

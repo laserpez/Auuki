@@ -26,7 +26,7 @@ describe('IDB', () => {
     ];
 
     test('open', async () => {
-        let resOpen = await idb.open('store', 1, 'numbers');
+        let resOpen = await idb.open('store', 1, ['numbers']);
 
         expect(resOpen.constructor.name).toBe('FDBDatabase'); // 'IDBDatabase'
         expect(resOpen.name).toBe('store');

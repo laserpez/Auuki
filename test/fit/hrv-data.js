@@ -91,8 +91,8 @@ const appData = {records, laps, events};
 
 // Expected FITjs
 function FITjs(args = {}) {
-    const headerCRC = args.crc ? 40815 : 0;
-    const fileCRC   = args.crc ? 14083 : undefined;
+    const headerCRC = args.crc ? 33188 : 0;
+    const fileCRC   = args.crc ? 57664 : undefined;
 
     return [
         // file header
@@ -102,15 +102,15 @@ function FITjs(args = {}) {
             headerSize: 14,
             protocolVersion: '2.0',
             profileVersion: '21.40',
-            dataSize: 482, // 489,
+            dataSize: 454,
             dataType: '.FIT',
             crc: headerCRC,
         },
         // definition file_id
         {
             type: 'definition',
-            name: 'file_id',
             architecture: 0,
+            name: 'file_id',
             local_number: 0,
             length: 24,
             data_record_length: 16,
@@ -131,25 +131,24 @@ function FITjs(args = {}) {
             local_number: 0,
             length: 16,
             fields: {
-                time_created:  1669140872000,
-                manufacturer:  1,
-                product:       3570,
+                time_created: 1669140872000,
+                manufacturer: 1,
+                product: 3570,
                 serial_number: 3313379353,
-                number:        0,
-                type:          4,
+                number: 0,
+                type: 4,
             },
-            // dev_fields: [],
         },
         // definition file_creator
         {
             type: 'definition',
-            name: 'file_creator',
             architecture: 0,
+            name: 'file_creator',
             local_number: 1,
             length: 9,
             data_record_length: 3,
             fields: [
-                {number: 0, size: 2, base_type: 'uint16'}, // software_version
+                {number: 0, size: 2, base_type: 'uint16'},
             ],
             dev_fields: [],
         },
@@ -166,157 +165,160 @@ function FITjs(args = {}) {
         // definition record
         {
             type: 'definition',
-            name: 'record',
             architecture: 0,
+            name: 'record',
             local_number: 3,
-            length: 48,
-            data_record_length: 34,
+            length: 39,
+            data_record_length: 28,
             fields: [
-                {number: 253, size: 4, base_type: 'uint32'}, // timestamp
-                {number:   0, size: 4, base_type: 'sint32'}, // position_lat
-                {number:   1, size: 4, base_type: 'sint32'}, // position_long
-                {number:   2, size: 2, base_type: 'uint16'}, // altitude
-                {number:   3, size: 1, base_type: 'uint8'},  // heart_rate
-                {number:   4, size: 1, base_type: 'uint8'},  // cadence
-                {number:   5, size: 4, base_type: 'uint32'}, // distance
-                {number:   6, size: 2, base_type: 'uint16'}, // speed
-                {number:   7, size: 2, base_type: 'uint16'}, // power
-                {number:   9, size: 2, base_type: 'sint16'}, // grade
-                {number:  62, size: 1, base_type: 'uint8'},  // device_index
-                {number:  54, size: 2, base_type: 'uint16'}, // total_hemoglobin_conc
-                {number:  57, size: 2, base_type: 'uint16'}, // saturated_hemoglobin_percent
-                {number:  139, size: 2, base_type: 'uint16'}, // core_temperature
+                {number: 253, size: 4, base_type: 'uint32'},
+                {number: 0, size: 4, base_type: 'sint32'},
+                {number: 1, size: 4, base_type: 'sint32'},
+                {number: 2, size: 2, base_type: 'uint16'},
+                {number: 3, size: 1, base_type: 'uint8'},
+                {number: 4, size: 1, base_type: 'uint8'},
+                {number: 5, size: 4, base_type: 'uint32'},
+                {number: 6, size: 2, base_type: 'uint16'},
+                {number: 7, size: 2, base_type: 'uint16'},
+                {number: 9, size: 2, base_type: 'sint16'},
+                {number: 62, size: 1, base_type: 'uint8'},
             ],
             dev_fields: [],
         },
         // definition hrv
         {
             type: 'definition',
-            name: 'hrv',
             architecture: 0,
+            name: 'hrv',
             local_number: 4,
             length: 9,
             data_record_length: 11,
             fields: [
-                {number: 0, size: 10, base_type: 'uint16'}, // time
+                {number: 0, size: 10, base_type: 'uint16'},
             ],
             dev_fields: [],
         },
-        // data record 0
+        // data record
         {
             type: 'data',
             name: 'record',
             local_number: 3,
-            length: 34,
+            length: 28,
             fields: {
-                timestamp: 1669140869000,        //
-                position_lat: -128450465,        // sint32, semicircles
-                position_long: 1978610201,       // sint32, semicircles
-                altitude: 87,                    // uint16, scale 5, offset 500, m
-                heart_rate: 90,                  // uint8, bpm
-                cadence: 70,                     // uint8, rpm
-                distance: 7.66,                  // uint32, scale 100, m
-                speed: 6.717,                    // uint16, scale 1000, m/s
-                power: 160,                      // uint16, w
-                grade: 0,                        // sint16, scale 100, %
-                device_index: 0,                 // uint8, 0
-                total_hemoglobin_conc: 0,        // uint16, scale 100, g/dL
-                saturated_hemoglobin_percent: 0, // uint16, scale 10, %
-                core_temperature: 0,             // uint16, scale 100, C
-            }
+                timestamp: 1669140869000,
+                position_lat: -128450465,
+                position_long: 1978610201,
+                altitude: 87,
+                heart_rate: 90,
+                cadence: 70,
+                distance: 7.66,
+                speed: 6.717,
+                power: 160,
+                grade: 0,
+                device_index: 0,
+                total_hemoglobin_conc: 0,
+                saturated_hemoglobin_percent: 0,
+                core_temperature: 0,
+            },
         },
-        // data hrv 0
+        // data hrv
         {
             type: 'data',
             name: 'hrv',
             local_number: 4,
             length: 11,
             fields: {
-                time: [882, 906, 0xFFFF, 0xFFFF, 0xFFFF], // time array
-            }
+                time: [
+                    882,
+                    906,
+                    65535,
+                    65535,
+                    65535,
+                ],
+            },
         },
-        // data record 1
+        // data record
         {
             type: 'data',
             name: 'record',
             local_number: 3,
-            length: 34,
+            length: 28,
             fields: {
-                timestamp: 1669140870000,  //
-                position_lat: -128449747,  // sint32, semicircles
-                position_long: 1978610154, // sint32, semicircles
-                altitude: 87,              // uint16, scale 5, offset 500, m
-                heart_rate: 91,            // uint8, bpm
-                cadence: 71,               // uint8, rpm
-                distance: 14.36,           // uint32, scale 100, m
-                speed: 6.781,              // uint16, scale 1000, m/s
-                power: 161,                // uint16, w
-                grade: 0,                  // sint16, scale 100, %
-                device_index: 0,           // uint8, 0
-                total_hemoglobin_conc: 0,        // uint16, scale 100, g/dL
-                saturated_hemoglobin_percent: 0, // uint16, scale 10, %
-                core_temperature: 0,             // uint16, scale 100, C
-            }
+                timestamp: 1669140870000,
+                position_lat: -128449747,
+                position_long: 1978610154,
+                altitude: 87,
+                heart_rate: 91,
+                cadence: 71,
+                distance: 14.36,
+                speed: 6.781,
+                power: 161,
+                grade: 0,
+                device_index: 0,
+                total_hemoglobin_conc: 0,
+                saturated_hemoglobin_percent: 0,
+                core_temperature: 0,
+            },
         },
-        // data record 2
+        // data record
         {
             type: 'data',
             name: 'record',
             local_number: 3,
-            length: 34,
+            length: 28,
             fields: {
-                timestamp: 1669140871000,  //
-                position_lat: -128449037,  // sint32, semicircles
-                position_long: 1978609898, // sint32, semicircles
-                altitude: 87,              // uint16, scale 5, offset 500, m
-                heart_rate: 92,            // uint8, bpm
-                cadence: 72,               // uint8, rpm
-                distance:	21.34,           // uint32, scale 100, m
-                speed: 7.08,               // uint16, scale 1000, m/s
-                power: 162,                // uint16, w
-                grade: 0,                  // sint16, scale 100, %
-                device_index: 0,           // uint8, 0
-                total_hemoglobin_conc: 0,        // uint16, scale 100, g/dL
-                saturated_hemoglobin_percent: 0, // uint16, scale 10, %
-                core_temperature: 0,             // uint16, scale 100, C
-            }
+                timestamp: 1669140871000,
+                position_lat: -128449037,
+                position_long: 1978609898,
+                altitude: 87,
+                heart_rate: 92,
+                cadence: 72,
+                distance: 21.34,
+                speed: 7.08,
+                power: 162,
+                grade: 0,
+                device_index: 0,
+                total_hemoglobin_conc: 0,
+                saturated_hemoglobin_percent: 0,
+                core_temperature: 0,
+            },
         },
-        // data record 3
+        // data record
         {
             type: 'data',
             name: 'record',
             local_number: 3,
-            length: 34,
+            length: 28,
             fields: {
-                timestamp: 1669140872000,  //
-                position_lat: -128448324,  // sint32, semicircles
-                position_long: 1978609588, // sint32, semicircles
-                altitude: 87,              // uint16, scale 5, offset 500, m
-                heart_rate: 93,            // uint8, bpm
-                cadence: 73,               // uint8, rpm
-                distance:	28.56,           // uint32, scale 100, m
-                speed: 7.498,              // uint16, scale 1000, m/s
-                power: 163,                // uint16, w
-                grade: 0,                  // sint16, scale 100, %
-                device_index: 0,           // uint8, 0
-                total_hemoglobin_conc: 0,        // uint16, scale 100, g/dL
-                saturated_hemoglobin_percent: 0, // uint16, scale 10, %
-                core_temperature: 0,             // uint16, scale 100, C
-            }
+                timestamp: 1669140872000,
+                position_lat: -128448324,
+                position_long: 1978609588,
+                altitude: 87,
+                heart_rate: 93,
+                cadence: 73,
+                distance: 28.56,
+                speed: 7.498,
+                power: 163,
+                grade: 0,
+                device_index: 0,
+                total_hemoglobin_conc: 0,
+                saturated_hemoglobin_percent: 0,
+                core_temperature: 0,
+            },
         },
-        // defintion event
+        // definition event
         {
             type: 'definition',
-            name: 'event',
             architecture: 0,
+            name: 'event',
             local_number: 2,
             length: 18,
             data_record_length: 8,
             fields: [
-                {number: 253, size: 4, base_type: 'uint32'}, // timestamp
-                {number:   0, size: 1, base_type: 'enum'},   // event
-                {number:   1, size: 1, base_type: 'enum'},   // event_type
-                {number:   4, size: 1, base_type: 'uint8'},  // event_group
+                {number: 253, size: 4, base_type: 'uint32'},
+                {number: 0, size: 1, base_type: 'enum'},
+                {number: 1, size: 1, base_type: 'enum'},
+                {number: 4, size: 1, base_type: 'uint8'},
             ],
             dev_fields: [],
         },
@@ -327,11 +329,11 @@ function FITjs(args = {}) {
             local_number: 2,
             length: 8,
             fields: {
-                timestamp: 1669140869000, //
-                event: 0,                 // timer event
-                event_type: 0,            // event_type
-                event_group: 0,           //
-            }
+                timestamp: 1669140869000,
+                event: 0,
+                event_type: 0,
+                event_group: 0,
+            },
         },
         // data event
         {
@@ -340,28 +342,28 @@ function FITjs(args = {}) {
             local_number: 2,
             length: 8,
             fields: {
-                timestamp: 1669140872000, //
-                event: 0,                 // timer event
-                event_type: 1,            // event_type
-                event_group: 0,           //
-            }
+                timestamp: 1669140872000,
+                event: 0,
+                event_type: 1,
+                event_group: 0,
+            },
         },
         // definition lap
         {
             type: 'definition',
-            name: 'lap',
             architecture: 0,
+            name: 'lap',
             local_number: 5,
             length: 27,
             data_record_length: 21,
             fields: [
-                {number: 253, size: 4, base_type: 'uint32'}, // timestamp
-                {number: 2,   size: 4, base_type: 'uint32'}, // start_time
-                {number: 7,   size: 4, base_type: 'uint32'}, // total_elapsed_time
-                {number: 8,   size: 4, base_type: 'uint32'}, // total_timer_time
-                {number: 254, size: 2, base_type: 'uint16'}, // message_index
-                {number: 0,   size: 1, base_type: 'enum'},   // event
-                {number: 1,   size: 1, base_type: 'enum'},   // event_type
+                {number: 253, size: 4, base_type: 'uint32'},
+                {number: 2, size: 4, base_type: 'uint32'},
+                {number: 7, size: 4, base_type: 'uint32'},
+                {number: 8, size: 4, base_type: 'uint32'},
+                {number: 254, size: 2, base_type: 'uint16'},
+                {number: 0, size: 1, base_type: 'enum'},
+                {number: 1, size: 1, base_type: 'enum'},
             ],
             dev_fields: [],
         },
@@ -372,7 +374,7 @@ function FITjs(args = {}) {
             local_number: 5,
             length: 21,
             fields: {
-                timestamp:  1669140872000,
+                timestamp: 1669140872000,
                 start_time: 1669140869000,
                 total_elapsed_time: 3,
                 total_timer_time: 3,
@@ -387,28 +389,29 @@ function FITjs(args = {}) {
             architecture: 0,
             name: 'session',
             local_number: 6,
-            length: 63,
-            data_record_length: 43,
+            length: 66,
+            data_record_length: 45,
             fields: [
-                {number: 253, size: 4, base_type: 'uint32'}, // timestamp
-                {number: 2,   size: 4, base_type: 'uint32'}, // start_time
-                {number: 7,   size: 4, base_type: 'uint32'}, // total_elapsed_time
-                {number: 8,   size: 4, base_type: 'uint32'}, // total_timer_time
-                {number: 254, size: 2, base_type: 'uint16'}, // message_index
-                {number: 5,   size: 1, base_type: 'enum'},   // sport
-                {number: 6,   size: 1, base_type: 'enum'},   // sub_sport
-                {number: 9,   size: 4, base_type: 'uint32'}, // total_distance
-                {number: 11,  size: 2, base_type: 'uint16'}, // total_calories
-                {number: 14,  size: 2, base_type: 'uint16'}, // avg_speed
-                {number: 15,  size: 2, base_type: 'uint16'}, // max_speed
-                {number: 16,  size: 1, base_type: 'uint8'},  // avg_heart_rate
-                {number: 17,  size: 1, base_type: 'uint8'},  // max_heart_rate
-                {number: 18,  size: 1, base_type: 'uint8'},  // avg_cadence
-                {number: 19,  size: 1, base_type: 'uint8'},  // max_cadence
-                {number: 20,  size: 2, base_type: 'uint16'}, // avg_power
-                {number: 21,  size: 2, base_type: 'uint16'}, // max_power
-                {number: 25,  size: 2, base_type: 'uint16'}, // first_lap_index
-                {number: 26,  size: 2, base_type: 'uint16'}, // num_laps
+                {number: 253, size: 4, base_type: 'uint32'},
+                {number: 2, size: 4, base_type: 'uint32'},
+                {number: 7, size: 4, base_type: 'uint32'},
+                {number: 8, size: 4, base_type: 'uint32'},
+                {number: 254, size: 2, base_type: 'uint16'},
+                {number: 5, size: 1, base_type: 'enum'},
+                {number: 6, size: 1, base_type: 'enum'},
+                {number: 9, size: 4, base_type: 'uint32'},
+                {number: 11, size: 2, base_type: 'uint16'},
+                {number: 14, size: 2, base_type: 'uint16'},
+                {number: 15, size: 2, base_type: 'uint16'},
+                {number: 16, size: 1, base_type: 'uint8'},
+                {number: 17, size: 1, base_type: 'uint8'},
+                {number: 18, size: 1, base_type: 'uint8'},
+                {number: 19, size: 1, base_type: 'uint8'},
+                {number: 20, size: 2, base_type: 'uint16'},
+                {number: 21, size: 2, base_type: 'uint16'},
+                {number: 25, size: 2, base_type: 'uint16'},
+                {number: 26, size: 2, base_type: 'uint16'},
+                {number: 45, size: 2, base_type: 'uint16'},
             ],
             dev_fields: [],
         },
@@ -417,28 +420,29 @@ function FITjs(args = {}) {
             type: 'data',
             name: 'session',
             local_number: 6,
-            length: 43,
+            length: 45,
             fields: {
-                timestamp:  1669140872000,
+                timestamp: 1669140872000,
                 start_time: 1669140869000,
                 total_elapsed_time: 3,
                 total_timer_time: 3,
                 message_index: 0,
                 sport: 2,
                 sub_sport: 58,
-                total_distance: 28.56,
-                total_calories: 0, // 0.4845
+                avg_power: 161,
+                avg_cadence: 71,
                 avg_speed: 7.019,
-                max_speed: 7.498,
-                avg_heart_rate: 91, // 91.5
-                max_heart_rate: 93,
-                avg_cadence: 71, // 71.5
-                max_cadence: 73,
-                avg_power: 161, // 161.5
+                avg_heart_rate: 91,
                 max_power: 163,
+                max_cadence: 73,
+                max_speed: 7.498,
+                max_heart_rate: 93,
+                total_distance: 28.56,
+                total_calories: 0,
                 first_lap_index: 0,
                 num_laps: 1,
-            }
+                threshold_power: 200,
+            },
         },
         // definition activity
         {
@@ -449,13 +453,12 @@ function FITjs(args = {}) {
             length: 24,
             data_record_length: 14,
             fields: [
-                {number: 253, size: 4, base_type: 'uint32'}, // timestamp
-                {number: 0,   size: 4, base_type: 'uint32'}, // total_timer_time
-                {number: 1,   size: 2, base_type: 'uint16'}, // num_sessions
-                {number: 2,   size: 1, base_type: 'enum'},   // type
-                {number: 3,   size: 1, base_type: 'enum'},   // event
-                {number: 4,   size: 1, base_type: 'enum'},   // event_type
-                // {number: 5,   size: 4, base_type: 'uint32'}, // local_timestamp
+                {number: 253, size: 4, base_type: 'uint32'},
+                {number: 0, size: 4, base_type: 'uint32'},
+                {number: 1, size: 2, base_type: 'uint16'},
+                {number: 2, size: 1, base_type: 'enum'},
+                {number: 3, size: 1, base_type: 'enum'},
+                {number: 4, size: 1, base_type: 'enum'},
             ],
             dev_fields: [],
         },
@@ -472,15 +475,14 @@ function FITjs(args = {}) {
                 type: 0,
                 event: 26,
                 event_type: 1,
-                // local_timestamp: 1669140872000,
-            }
+            },
         },
         // crc
         {
             type: 'crc',
             length: 2,
             crc: fileCRC,
-        }
+        },
     ];
 };
 // END expected FITjs
@@ -491,236 +493,108 @@ function FITjs(args = {}) {
 const fitBinary = [
     // header
     [
-        14,           // header length
-        32,           // profile version
-        92,8,         // protocol version
-        127,1,0,0,    // data size (without header and crc)
-        46,70,73,84,  // data type (ASCII for ".FIT")
-        111, 159,     // header crc
+        14, 32, 92, 8, 198, 1, 0, 0, 46, 70, 73, 84, 164, 129,
     ],
     // definition file_id
     [
-        0b01000000,  // header, 64, 0b01000000
-        0,           // reserved
-        0,           // architecture
-        0, 0,        // global number
-        5,           // number of fields
-        4, 4, 134,   // time_created
-        1, 2, 132,   // manufacturer
-        2, 2, 132,   // product
-        5, 2, 132,   // number
-        0, 1, 0,     // type
+        64, 0, 0, 0, 0, 6, 4, 4, 134, 1, 2, 132, 2, 2, 132, 3,
+        4, 140, 5, 2, 132, 0, 1, 0,
     ],
     // data file_id
     [
-        0b00000000,        // header, 0, 0b00000000
-        136, 197, 223, 61, // time_created
-        255, 0,            // manufacturer
-        0, 0,              // product
-        0, 0,              // number
-        4,                 // type
+        0, 136, 197, 223, 61, 1, 0, 242, 13, 25, 40, 126, 197, 0, 0, 4,
+    ],
+    // definition file_creator
+    [
+        65, 0, 0, 49, 0, 1, 0, 2, 132,
+    ],
+    // data file_creator
+    [
+        1, 84, 11,
     ],
     // definition record
     [
-        0b01000011,  // header, 69, 0b01000101
-        0,           // reserved
-        0,           // architecture
-        20, 0,       // global number
-        11,          // number of fields
-        253, 4, 134, // timestamp
-          0, 4, 133, // position_lat
-          1, 4, 133, // position_long
-          2, 2, 132, // altitude 935
-          3, 1,   2, // heart_rate
-          4, 1,   2, // cadence
-          5, 4, 134, // distance 10000
-          6, 2, 132, // speed 6000
-          7, 2, 132, // power
-          9, 2, 131, // grade 140
-         62, 1,   2, // device_index
-    ],
-    // data record
-    [
-        0b0000011,         // header
-        133, 197, 223, 61, // timestamp
-        95, 0, 88, 248,    // position_lat
-        25, 50, 239, 117,  // position_long
-        119, 11,           // altitude 2935
-        90,                // heart_rate
-        70,                // cadence
-        254, 2, 0, 0,      // distance
-        61, 26,            // speed
-        160, 0,            // power
-        0, 0,              // grade
-        0,                 // device_index
+        67, 0, 0, 20, 0, 11, 253, 4, 134, 0, 4, 133, 1, 4, 133, 2,
+        2, 132, 3, 1, 2, 4, 1, 2, 5, 4, 134, 6, 2, 132, 7, 2,
+        132, 9, 2, 131, 62, 1, 2,
     ],
     // definition hrv
     [
-        0b01000011,  // header, 69, 0b01000101
-        0,           // reserved
-        0,           // architecture
-        20, 0,       // global number
-        1,           // number of fields
-        0, 10, 132,  // time
+        68, 0, 0, 78, 0, 1, 0, 10, 132,
+    ],
+    // data record
+    [
+        3, 133, 197, 223, 61, 95, 0, 88, 248, 25, 50, 239, 117, 119, 11, 90,
+        70, 254, 2, 0, 0, 61, 26, 160, 0, 0, 0, 0,
     ],
     // data hrv
     [
-        0b0000011,   // header
-        141, 3,      // time 0
-        138, 3,      // time 1
-        255, 255,    // time 2
-        255, 255,    // time 3
-        255, 255,    // time 4
+        4, 80, 117, 16, 211, 255, 255, 255, 255, 255, 255,
     ],
+    // data record
     [
-        0b0000011,         // header
-        134, 197, 223, 61, // timestamp
-        45, 3, 88, 248,    // position_lat
-        234, 49, 239, 117, // position_long
-        119, 11,           // altitude 2935
-        91,                // heart_rate
-        71,                // cadence
-        156, 5, 0, 0,      // distance
-        125, 26,           // speed
-        161, 0,            // power
-        0, 0,              // grade
-        0,                 // device_index
+        3, 134, 197, 223, 61, 45, 3, 88, 248, 234, 49, 239, 117, 119, 11, 91,
+        71, 156, 5, 0, 0, 125, 26, 161, 0, 0, 0, 0,
     ],
+    // data record
     [
-        0b0000011,         // header
-        135, 197, 223, 61, // timestamp
-        243, 5, 88, 248,   // position_lat
-        234, 48, 239, 117, // position_long
-        119, 11,           // altitude 2935
-        92,                // heart_rate
-        72,                // cadence
-        86, 8, 0, 0,       // distance
-        168, 27,           // speed
-        162, 0,            // power
-        0, 0,              // grade
-        0,                 // device_index
+        3, 135, 197, 223, 61, 243, 5, 88, 248, 234, 48, 239, 117, 119, 11, 92,
+        72, 86, 8, 0, 0, 168, 27, 162, 0, 0, 0, 0,
     ],
+    // data record
     [
-        0b0000011,         // header
-        136, 197, 223, 61, // timestamp
-        188, 8, 88, 248,   // position_lat
-        180, 47, 239, 117, // position_long
-        119, 11,           // altitude 2935
-        93,                // heart_rate
-        73,                // cadence
-        40, 11, 0, 0,      // distance
-        74, 29,            // speed
-        163, 0,            // power
-        0, 0,              // grade
-        0,                 // device_index
+        3, 136, 197, 223, 61, 188, 8, 88, 248, 180, 47, 239, 117, 119, 11, 93,
+        73, 40, 11, 0, 0, 74, 29, 163, 0, 0, 0, 0,
+    ],
+    // definition event
+    [
+        66, 0, 0, 21, 0, 4, 253, 4, 134, 0, 1, 0, 1, 1, 0, 4,
+        1, 2,
+    ],
+    // data event
+    [
+        2, 133, 197, 223, 61, 0, 0, 0,
+    ],
+    // data event
+    [
+        2, 136, 197, 223, 61, 0, 1, 0,
     ],
     // definition lap
     [
-        0b01000100,  // header, 68, 0b01000100
-        0,           // reserved
-        0,           // architecture
-        19, 0,       // global number
-        7,           // number of fields
-        253, 4, 134, // timestamp
-          2, 4, 134, // start_time
-          7, 4, 134, // total_elapsed_time
-          8, 4, 134, // total_timer_time
-        254, 2, 132, // message_index
-          0, 1,   0, // event
-          1, 1,   0, // event_type
+        69, 0, 0, 19, 0, 7, 253, 4, 134, 2, 4, 134, 7, 4, 134, 8,
+        4, 134, 254, 2, 132, 0, 1, 0, 1, 1, 0,
     ],
     // data lap
     [
-        0b00000100,        // header, 68, 0b00001000
-        136, 197, 223, 61, // timestamp
-        133, 197, 223, 61, // start_time
-        184, 11, 0, 0,     // total_elapsed_time
-        184, 11, 0, 0,     // total_timer_time
-        0, 0,              // message_index
-        9,                 // event
-        1,                 // event_type
+        5, 136, 197, 223, 61, 133, 197, 223, 61, 184, 11, 0, 0, 184, 11, 0,
+        0, 0, 0, 9, 1,
     ],
-
     // definition session
     [
-        0b01000101,  // header, 69, 0b01000101
-        0,           // reserved
-        0,           // architecture
-        18, 0,       // global number
-        19,          // number of fields
-        253, 4, 134, // timestamp
-          2, 4, 134, // start_time
-          7, 4, 134, // total_elapsed_time
-          8, 4, 134, // total_timer_time
-        254, 2, 132, // message_index
-          5, 1,   0, // sport
-          6, 1,   0, // sub_sport
-          9, 4, 134, // total_distance
-         11, 2, 132, // total_calories
-         14, 2, 132, // avg_speed
-         15, 2, 132, // max_speed
-         16, 1,   2, // avg_heart_rate
-         17, 1,   2, // max_heart_rate
-         18, 1,   2, // avg_cadence
-         19, 1,   2, // max_cadence
-         20, 2, 132, // avg_power
-         21, 2, 132, // max_power
-         25, 2, 132, // first_lap_index
-         26, 2, 132, // num_laps
+        70, 0, 0, 18, 0, 20, 253, 4, 134, 2, 4, 134, 7, 4, 134, 8,
+        4, 134, 254, 2, 132, 5, 1, 0, 6, 1, 0, 9, 4, 134, 11, 2,
+        132, 14, 2, 132, 15, 2, 132, 16, 1, 2, 17, 1, 2, 18, 1, 2,
+        19, 1, 2, 20, 2, 132, 21, 2, 132, 25, 2, 132, 26, 2, 132, 45,
+        2, 132,
     ],
     // data session
     [
-        0b00000101,        // header, 5, 0b00000101
-        136, 197, 223, 61, // timestamp
-        133, 197, 223, 61, // start_time
-        184, 11, 0, 0,     // total_elapsed_time
-        184, 11, 0, 0,     // total_timer_time
-        0, 0,              // message_index
-        2,                 // sport
-        58,                // sub_sport
-        40, 11, 0, 0,      // total_distance
-        0, 0,              // total_calories
-        107, 27,           // avg_speed
-        74, 29,            // max_speed
-        91,                // avg_heart_rate
-        93,                // max_heart_rate
-        71,                // avg_cadence
-        73,                // max_cadence
-        161, 0,            // avg_power
-        163, 0,            // max_power
-        0, 0,              // first_lap_index
-        1, 0,              // num_laps
+        6, 136, 197, 223, 61, 133, 197, 223, 61, 184, 11, 0, 0, 184, 11, 0,
+        0, 0, 0, 2, 58, 40, 11, 0, 0, 0, 0, 107, 27, 74, 29, 91,
+        93, 71, 73, 161, 0, 163, 0, 0, 0, 1, 0, 200, 0,
     ],
     // definition activity
     [
-        0b01000110,  // header, 70, 0b01000110
-        0,           // reserved
-        0,           // architecture
-        34, 0,       // global number
-        6,           // number of fields
-        253, 4, 134, // timestamp
-          0, 4, 134, // total_timer_time
-          1, 2, 132, // num sessions
-          2, 1,   0, // type
-          3, 1,   0, // event
-          4, 1,   0, // event_type
-          // 5, 4, 134, // local_timestamp
+        71, 0, 0, 34, 0, 6, 253, 4, 134, 0, 4, 134, 1, 2, 132, 2,
+        1, 0, 3, 1, 0, 4, 1, 0,
     ],
     // data activity
     [
-        0b00000110,        // header, 6, 0b00000110
-        136, 197, 223, 61, // timestamp
-        184,  11,   0,  0, // total_timer_time
-        1, 0,              // num sessions
-        0,                 // type
-        26,                // event
-        1,                 // stop
-        // 136, 197, 223, 61, // local_timestamp
+        7, 136, 197, 223, 61, 184, 11, 0, 0, 1, 0, 0, 26, 1,
     ],
-    // crc, needs to be computed last evetytime when encoding to binary
+    // crc
     [
-        3,
-        55,
+        64, 225,
     ],
 ];
 

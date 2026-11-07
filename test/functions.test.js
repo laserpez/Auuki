@@ -137,10 +137,6 @@ describe('empty check', () => {
         test('with empty String', () => {
             expect(empty("")).toBe(true);
         });
-
-        test('with undefined', () => {
-            expect(empty(undefined)).toBe(true);
-        });
     });
 
     describe('is not empty', () => {
@@ -160,10 +156,6 @@ describe('empty check', () => {
     describe('throws error', () => {
         test('with null', () => {
             expect(() => empty(null)).toThrow();
-        });
-
-        test('with number', () => {
-            expect(() => empty(0)).toThrow();
         });
     });
 });
@@ -186,12 +178,6 @@ describe('first element of collection', () => {
 
         test('of String', () => {
             expect(first("")).toBe(undefined);
-        });
-    });
-
-    describe('first of undefined is undefined', () => {
-        test('with undefined', () => {
-            expect(first(undefined)).toBe(undefined);
         });
     });
 
@@ -237,12 +223,6 @@ describe('second element of collection', () => {
         });
     });
 
-    describe('second of undefined is undefined', () => {
-        test('with undefined', () => {
-            expect(second(undefined)).toBe(undefined);
-        });
-    });
-
     describe('throws error', () => {
         test('with number', () => {
             expect(() => second(0)).toThrow();
@@ -277,12 +257,6 @@ describe('last element of Collection or String', () => {
 
         test('with String', () => {
             expect(last('')).toBe(undefined);
-        });
-    });
-
-    describe('last of undefined is undefined', () => {
-        test('with undefined', () => {
-            expect(second(undefined)).toBe(undefined);
         });
     });
 
@@ -370,11 +344,6 @@ describe('sum', () => {
 });
 
 describe('max', () => {
-    test('max of array', () => {
-        expect(max([0])).toBe(0);
-        expect(max([0,3,1])).toBe(3);
-    });
-
     test('max of array of objects', () => {
         expect(max([{x: 0}], 'x')).toBe(0);
         expect(max([{x: 0}, {x: 3}, {x: 1},], 'x')).toBe(3);

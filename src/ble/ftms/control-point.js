@@ -128,11 +128,21 @@ function PowerTarget() {
         return view.buffer;
     }
 
+    // DataView -> {power: Int}
+    function decode(dataview) {
+        const power = spec.decodeField('power', dataview.getUint16(1, true));
+
+        return {
+            power,
+        };
+    }
+
     return Object.freeze({
         opCode,
         length,
         definitions,
         encode,
+        decode,
     });
 }
 

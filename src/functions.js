@@ -176,12 +176,8 @@ function mavg(value_c, value_p, count_c, count_p = count_c-1) {
     return (value_c + ((count_p) * value_p)) / count_c;
 }
 
-function max(xs, prop = false) {
-    if(prop !== false) {
-        return xs.reduce( (acc,v,i) => v[prop] > acc ? v[prop] : acc, 0);
-    } else {
-        return Math.max(xs);
-    }
+function max(xs, prop) {
+    return xs.reduce( (acc,v,i) => v[prop] > acc ? v[prop] : acc, 0);
 };
 
 function sum(xs, path = false) {
