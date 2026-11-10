@@ -237,6 +237,7 @@ class Watch {
     stop() {
         const self = this;
         if(self.isStarted() || self.isPaused()) {
+            self.hasBeenAutoPaused = false;
             timer.postMessage('stop');
 
             xf.dispatch('watch:event', {
