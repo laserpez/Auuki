@@ -500,7 +500,7 @@ xf.reg('app:start', async function(_, db) {
     db.theme = models.theme.set(models.theme.restore());
     db.measurement = models.measurement.set(models.measurement.restore());
     db.volume = models.volume.set(models.volume.restore());
-    db.dataTileSwitch = models.dataTileSwitch.set(models.dataTileSwitch.restore()),
+    db.dataTileSwitch = models.dataTileSwitch.set(models.dataTileSwitch.restore());
 
     db.sources = models.sources.set(models.sources.restore());
 
