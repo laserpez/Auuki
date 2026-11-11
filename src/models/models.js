@@ -1079,6 +1079,9 @@ class Planned {
             if(response.hrMax > 0) {
                 xf.dispatch('ui:hrMax-set', response.hrMax);
             }
+            if(response.hrMin > 0) {
+                xf.dispatch('ui:hrMin-set', response.hrMin);
+            }
         }
     }
 }

@@ -147,9 +147,10 @@ function Intervals(args = {}) {
         return body;
     }
 
-    function athleteToSettings(athlete = {}, defaults = {weight: 0, ftp: 0, hrMax: 0}) {
+    function athleteToSettings(athlete = {}, defaults = {weight: 0, ftp: 0, hrMax: 0, hrMin: 0}) {
         const sportSettings = athlete.sportSettings ?? [];
         const weight = athlete.weight ?? athlete.icu_weight ?? defaults.weight;
+        const hrMin = athlete.icu_resting_hr ?? defaults.hrMin ?? 0;
 
         let rideSetting;
         let virtualRideSetting;
@@ -172,10 +173,10 @@ function Intervals(args = {}) {
         if(setting) {
             const ftp = setting.indoor_ftp ?? setting.ftp ?? defaults.ftp;
             const hrMax = setting.max_hr ?? defaults.hrMax;
-            return {weight, ftp, hrMax};
+            return {weight, ftp, hrMax, hrMin};
         }
 
-        return {weight, ftp: defaults.ftp, hrMax: defaults.hrMax};
+        return {weight, ftp: defaults.ftp, hrMax: defaults.hrMax, hrMin};
     }
 
     // GET /api/v1/athlete/{id}
