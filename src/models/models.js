@@ -505,6 +505,45 @@ class HRMax extends Model {
     }
 }
 
+class HRZones extends Model {
+    postInit(args = {}) {
+        const self = this;
+        const storageModel = {
+            key: self.prop,
+            fallback: self.defaultValue(),
+            parse: (str) => {
+                try {
+                    const value = JSON.parse(str);
+                    return Array.isArray(value) ? value : [];
+                } catch(e) {
+                    return [];
+                }
+            },
+            encode: JSON.stringify,
+        };
+        self.colors = ['#328AFF', '#57C057', '#F8C73A', '#FF663A', '#FE340B'];
+        self.storage = new args.storage(storageModel);
+    }
+    defaultValue() { return []; }
+    defaultIsValid(value) {
+        return Array.isArray(value) && value.every((z) => {
+            return Number.isFinite(z.start) && Number.isFinite(z.end);
+        });
+    }
+    // Returns 1-based zone number, 0 when below the first zone or unknown.
+    hrToZone(heartRate, hrMax, zones) {
+        if(!(hrMax > 0) || !(heartRate > 0)) return 0;
+        for(let i = zones.length - 1; i >= 0; i--) {
+            if(heartRate >= Math.floor(zones[i].start * hrMax)) return i + 1;
+        }
+        return 0;
+    }
+    zoneToColor(zone) {
+        const self = this;
+        return self.colors[zone - 1] ?? self.colors[self.colors.length - 1];
+    }
+}
+
 class Weight extends Model {
     postInit(args = {}) {
         const self = this;
@@ -1081,6 +1120,9 @@ class Planned {
             }
             if(response.hrMin > 0) {
                 xf.dispatch('ui:hrMin-set', response.hrMin);
+            }
+            if(exists(response.hrZones)) {
+                xf.dispatch('ui:hrZones-set', response.hrZones);
             }
         }
     }
@@ -1805,6 +1847,7 @@ const ftp = new FTP({prop: 'ftp', storage: LocalStorageItem});
 const weight = new Weight({prop: 'weight', storage: LocalStorageItem});
 const hrMin = new HRMin({prop: 'hrMin', storage: LocalStorageItem});
 const hrMax = new HRMax({prop: 'hrMax', storage: LocalStorageItem});
+const hrZones = new HRZones({prop: 'hrZones', storage: LocalStorageItem});
 const theme = new Theme({prop: 'theme', storage: LocalStorageItem});
 const dockMode = new DockMode({prop: 'dockMode', storage: LocalStorageItem});
 const volume = new Volume({prop: 'volume', storage: LocalStorageItem});
@@ -1864,6 +1907,7 @@ let models = {
     weight,
     hrMin,
     hrMax,
+    hrZones,
     dockMode,
     volume,
     theme,

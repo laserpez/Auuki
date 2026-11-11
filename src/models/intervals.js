@@ -147,6 +147,23 @@ function Intervals(args = {}) {
         return body;
     }
 
+    function athleteToHrZones(athlete = {}, setting = {}) {
+        const ids = setting.custom_zones_ids ?? [];
+        const items = athlete.custom_items ?? [];
+        const item = items.find((i) => {
+            const content = i.content ?? {};
+            return i.type === 'ZONES' &&
+                ids.includes(i.id) &&
+                content.stream_type === 'heartrate' &&
+                content.anchor === 'max_hr';
+        });
+        const zones = item?.content?.zones ?? [];
+        const valid = zones.length > 0 && zones.every((z) => {
+            return Number.isFinite(z.start) && Number.isFinite(z.end);
+        });
+        return valid ? zones.map((z) => ({start: z.start, end: z.end})) : [];
+    }
+
     function athleteToSettings(athlete = {}, defaults = {weight: 0, ftp: 0, hrMax: 0, hrMin: 0}) {
         const sportSettings = athlete.sportSettings ?? [];
         const weight = athlete.weight ?? athlete.icu_weight ?? defaults.weight;
@@ -173,6 +190,10 @@ function Intervals(args = {}) {
         if(setting) {
             const ftp = setting.indoor_ftp ?? setting.ftp ?? defaults.ftp;
             const hrMax = setting.max_hr ?? defaults.hrMax;
+            const hrZones = athleteToHrZones(athlete, setting);
+            if(hrZones.length > 0) {
+                return {weight, ftp, hrMax, hrMin, hrZones};
+            }
             return {weight, ftp, hrMax, hrMin};
         }
 

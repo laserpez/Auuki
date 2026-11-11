@@ -511,6 +511,24 @@ class CadenceGroup extends DataView {
 customElements.define('cadence-group', CadenceGroup);
 
 
+// Color for a heart rate (bpm) from the zones imported from Intervals.icu.
+function hrColor(bpm, fallback = '') {
+    const zone = models.hrZones.hrToZone(bpm, models.hrMax.state, models.hrZones.state);
+    return (zone > 0) ? models.hrZones.zoneToColor(zone) : fallback;
+}
+
+function hrPctColor(pct, fallback = '') {
+    return hrColor(pct / 100 * models.hrMax.state, fallback);
+}
+
+function paintColor(el, color) {
+    if(color === '') {
+        el.style.removeProperty('color');
+    } else {
+        el.style.color = color;
+    }
+}
+
 class HeartRateValue extends DataView {
     getDefaults() {
         return {
@@ -518,7 +536,7 @@ class HeartRateValue extends DataView {
         };
     }
     transform(state) {
-        this.style = 'color: #FE340B';
+        paintColor(this, hrColor(state, '#FE340B'));
         return Math.round(state);
     }
 }
@@ -532,6 +550,7 @@ class HeartRateLapValue extends DataView {
         };
     }
     transform(state) {
+        paintColor(this, hrColor(state));
         return Math.round(state);
     }
 }
@@ -545,6 +564,7 @@ class HeartRateAvgValue extends DataView {
         };
     }
     transform(state) {
+        paintColor(this, hrColor(state));
         return Math.round(state);
     }
 }
@@ -558,6 +578,7 @@ class HeartRateMaxValue extends DataView {
         };
     }
     transform(state) {
+        paintColor(this, hrColor(state));
         return Math.round(state);
     }
 }
@@ -571,6 +592,7 @@ class HeartRate60sValue extends DataView {
         };
     }
     transform(state) {
+        paintColor(this, hrColor(state));
         return Math.round(state);
     }
 }
@@ -584,6 +606,7 @@ class HrMaxPctValue extends DataView {
         };
     }
     transform(state) {
+        paintColor(this, hrPctColor(state));
         return state;
     }
 }
@@ -597,6 +620,7 @@ class HrMaxPct60sValue extends DataView {
         };
     }
     transform(state) {
+        paintColor(this, hrPctColor(state));
         return Math.round(state);
     }
 }
@@ -1172,7 +1196,7 @@ class LapsList extends DataView {
                         <div class="lap--value lap--duration">${formatTime({value: duration, format: 'mm:ss'})}</div>
                         <div class="lap--value lap--power zone-${zone}-color">${powerLap} W</div>
                         <div class="lap--value lap--cadence">${cadenceLap}</div>
-                        <div class="lap--value lap--heart-rate">${heartRateLap}</div>
+                        <div class="lap--value lap--heart-rate" style="color: ${hrColor(heartRateLap)}">${heartRateLap}</div>
                         <div class="lap--value lap--smo2">${smo2Lap.toFixed(2)}</div>
                         <div class="lap--value lap--thb">${thbLap.toFixed(2)}</div>
                         <div class="lap--value lap--core-temperature">${coreTemperatureLap.toFixed(2)}</div>

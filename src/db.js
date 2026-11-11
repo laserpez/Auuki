@@ -70,6 +70,7 @@ let db = {
     weight: models.weight.default,
     hrMin: models.hrMin.default,
     hrMax: models.hrMax.default,
+    hrZones: models.hrZones.default,
     theme: models.theme.default,
     dockMode: models.dockMode.default,
     measurement: models.measurement.default,
@@ -363,6 +364,11 @@ xf.reg('ui:hrMin-set', (hrMin, db) => {
     db.hrMin = models.hrMin.set(hrMin);
     models.hrMin.backup(db.hrMin);
 });
+xf.reg('ui:hrZones-set', (hrZones, db) => {
+    db.hrZones = models.hrZones.set(hrZones);
+    models.hrZones.backup(db.hrZones);
+});
+
 xf.reg('ui:hrMax-set', (hrMax, db) => {
     db.hrMax = models.hrMax.set(hrMax);
     models.hrMax.backup(db.hrMax);
@@ -497,6 +503,7 @@ xf.reg('app:start', async function(_, db) {
     db.weight = models.weight.set(models.weight.restore());
     db.hrMin = models.hrMin.set(models.hrMin.restore());
     db.hrMax = models.hrMax.set(models.hrMax.restore());
+    db.hrZones = models.hrZones.set(models.hrZones.restore());
     db.theme = models.theme.set(models.theme.restore());
     db.measurement = models.measurement.set(models.measurement.restore());
     db.volume = models.volume.set(models.volume.restore());
