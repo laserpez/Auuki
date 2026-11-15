@@ -754,11 +754,7 @@ class PowerTarget extends DataView {
     transform(state) {
         const power = Math.round(state);
         const zone = models.ftp.powerToZone(power);
-        if(equals(zone.name, 'one')) {
-            this.style.removeProperty('color');
-        } else {
-            this.style = `color: ${models.ftp.zoneToColor(zone.name)}`;
-        }
+        this.style = `color: ${models.ftp.zoneToColor(zone.name)}`;
         return power;
     }
 }
@@ -1024,11 +1020,7 @@ class PowerValue extends DataView {
     transform(state) {
         const power = Math.round(state);
         const zone = models.ftp.powerToZone(power);
-        if(equals(zone.name, 'one')) {
-            this.style.removeProperty('color');
-        } else {
-            this.style = `color: ${models.ftp.zoneToColor(zone.name)}`;
-        }
+        this.style = `color: ${models.ftp.zoneToColor(zone.name)}`;
         return power;
     }
 }

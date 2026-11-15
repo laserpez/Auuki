@@ -351,28 +351,6 @@ body {
 }
 
 
-.gray-zone {
-    background-color: var(--zone-gray);
-}
-.blue-zone {
-    background-color: var(--zone-blue);
-}
-.green-zone {
-    background-color: var(--zone-green);
-}
-.yellow-zone {
-    background-color: var(--zone-yellow);
-}
-.orange-zone {
-    background-color: var(--zone-orange);
-}
-.red-zone {
-    background-color: var(--zone-red);
-}
-.purple-zone {
-    background-color: var(--zone-red);
-}
-
 .chrome-bg {
     background-color: var(--chrome)
 }
