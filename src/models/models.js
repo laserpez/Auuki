@@ -521,7 +521,7 @@ class HRZones extends Model {
             },
             encode: JSON.stringify,
         };
-        self.colors = ['#328AFF', '#57C057', '#F8C73A', '#FF663A', '#FE340B'];
+        self.colors = ['#009e80', '#009e00', '#ffcb0e', '#ff7f0e', '#dd0447'];
         self.storage = new args.storage(storageModel);
     }
     defaultValue() { return []; }
