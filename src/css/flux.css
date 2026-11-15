@@ -248,6 +248,14 @@ body {
     --zone-blue:   #328AFF;
     --zone-gray:   #636468;
 
+    --power-zone-one:   #009e80;
+    --power-zone-two:   #009e00;
+    --power-zone-three: #ffcb0e;
+    --power-zone-four:  #ff7f0e;
+    --power-zone-five:  #dd0447;
+    --power-zone-six:   #6633cc;
+    --power-zone-seven: #504861;
+
     --orange-logo: #FC4C02;
     --white-gray:  #F7F7FA;
     --red-logo:    #E50914;
@@ -261,47 +269,47 @@ body {
 
 /* Color */
 .zone-one {
-    background-color: var(--zone-gray);
+    background-color: var(--power-zone-one);
 }
 .zone-two {
-    background-color: var(--zone-blue);
+    background-color: var(--power-zone-two);
 }
 .zone-three {
-    background-color: var(--zone-teal);
+    background-color: var(--power-zone-three);
 }
 .zone-four {
-    background-color: var(--zone-green);
+    background-color: var(--power-zone-four);
 }
 .zone-five {
-    background-color: var(--zone-yellow);
+    background-color: var(--power-zone-five);
 }
 .zone-six {
-    background-color: var(--zone-orange);
+    background-color: var(--power-zone-six);
 }
 .zone-seven {
-    background-color: var(--zone-red);
+    background-color: var(--power-zone-seven);
 }
 
 .zone-one-color {
-    color: var(--zone-gray);
+    color: var(--power-zone-one);
 }
 .zone-two-color {
-    color: var(--zone-blue);
+    color: var(--power-zone-two);
 }
 .zone-three-color {
-    color: var(--zone-teal);
+    color: var(--power-zone-three);
 }
 .zone-four-color {
-    color: var(--zone-green);
+    color: var(--power-zone-four);
 }
 .zone-five-color {
-    color: var(--zone-yellow);
+    color: var(--power-zone-five);
 }
 .zone-six-color {
-    color: var(--zone-orange);
+    color: var(--power-zone-six);
 }
 .zone-seven-color {
-    color: var(--zone-red);
+    color: var(--power-zone-seven);
 }
 
 .black {

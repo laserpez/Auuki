@@ -107,7 +107,7 @@ class WorkoutGraphViewModel {
         const initialStep = initialInterval.steps[0];
         let stepPrev = initialStep;
         let points = '';
-        let color  = '#328AFF'; // from css var(--zone-blue)
+        let color  = '#009e00'; // from css var(--power-zone-two)
 
         // accumulators
         let accX = 0;
