@@ -71,6 +71,7 @@ let db = {
     hrMin: models.hrMin.default,
     hrMax: models.hrMax.default,
     hrZones: models.hrZones.default,
+    powerZones: models.powerZones.default,
     theme: models.theme.default,
     dockMode: models.dockMode.default,
     measurement: models.measurement.default,
@@ -364,6 +365,11 @@ xf.reg('ui:hrMin-set', (hrMin, db) => {
     db.hrMin = models.hrMin.set(hrMin);
     models.hrMin.backup(db.hrMin);
 });
+xf.reg('ui:powerZones-set', (powerZones, db) => {
+    db.powerZones = models.powerZones.set(powerZones);
+    models.powerZones.backup(db.powerZones);
+    models.ftp.percentages = models.ftp.zonePercentages(db.powerZones);
+});
 xf.reg('ui:hrZones-set', (hrZones, db) => {
     db.hrZones = models.hrZones.set(hrZones);
     models.hrZones.backup(db.hrZones);
@@ -504,6 +510,8 @@ xf.reg('app:start', async function(_, db) {
     db.hrMin = models.hrMin.set(models.hrMin.restore());
     db.hrMax = models.hrMax.set(models.hrMax.restore());
     db.hrZones = models.hrZones.set(models.hrZones.restore());
+    db.powerZones = models.powerZones.set(models.powerZones.restore());
+    models.ftp.percentages = models.ftp.zonePercentages(db.powerZones);
     db.theme = models.theme.set(models.theme.restore());
     db.measurement = models.measurement.set(models.measurement.restore());
     db.volume = models.volume.set(models.volume.restore());

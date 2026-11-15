@@ -164,6 +164,19 @@ function Intervals(args = {}) {
         return valid ? zones.map((z) => ({start: z.start, end: z.end})) : [];
     }
 
+    // Intervals.icu stores the upper bound of each zone as % of FTP,
+    // e.g. [55, 75, 90, 105, 120, 150, 999]. Returns 6 fractions (the 7th
+    // zone is open ended), or [] when the setting is missing or invalid.
+    function athleteToPowerZones(setting = {}) {
+        const zones = setting.power_zones ?? [];
+        const bounds = zones.slice(0, 6);
+        const valid = zones.length === 7 &&
+            bounds.every((z, i) => {
+                return Number.isFinite(z) && z > 0 && (i === 0 || z > bounds[i - 1]);
+            });
+        return valid ? bounds.map((z) => z / 100) : [];
+    }
+
     function athleteToSettings(athlete = {}, defaults = {weight: 0, ftp: 0, hrMax: 0, hrMin: 0}) {
         const sportSettings = athlete.sportSettings ?? [];
         const weight = athlete.weight ?? athlete.icu_weight ?? defaults.weight;
@@ -191,10 +204,11 @@ function Intervals(args = {}) {
             const ftp = setting.indoor_ftp ?? setting.ftp ?? defaults.ftp;
             const hrMax = setting.max_hr ?? defaults.hrMax;
             const hrZones = athleteToHrZones(athlete, setting);
-            if(hrZones.length > 0) {
-                return {weight, ftp, hrMax, hrMin, hrZones};
-            }
-            return {weight, ftp, hrMax, hrMin};
+            const powerZones = athleteToPowerZones(setting);
+            const result = {weight, ftp, hrMax, hrMin};
+            if(hrZones.length > 0) result.hrZones = hrZones;
+            if(powerZones.length > 0) result.powerZones = powerZones;
+            return result;
         }
 
         return {weight, ftp: defaults.ftp, hrMax: defaults.hrMax, hrMin};

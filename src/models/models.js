@@ -393,6 +393,13 @@ class FTP extends Model {
     defaultPercentages() {
         return {'one': 0.54, 'two': 0.75, 'three': 0.87, 'four': 0.94, 'five': 1.05, 'six': 1.20};
     }
+    // Zone bounds imported from Intervals.icu, default ones when not available.
+    zonePercentages(bounds) {
+        const self = this;
+        if(empty(bounds)) return self.defaultPercentages();
+        const [one, two, three, four, five, six] = bounds;
+        return {one, two, three, four, five, six};
+    }
     toRelative(value, ftp) {
         const self = this;
         if(value > self.minAbsValue) return toFixed(value / ftp, 2);
@@ -464,6 +471,34 @@ class FTP extends Model {
         } else {
             return zones[6];
         }
+    }
+}
+
+// Upper bounds of power zones one to six as fractions of FTP.
+class PowerZones extends Model {
+    postInit(args = {}) {
+        const self = this;
+        const storageModel = {
+            key: self.prop,
+            fallback: self.defaultValue(),
+            parse: (str) => {
+                try {
+                    const value = JSON.parse(str);
+                    return Array.isArray(value) ? value : [];
+                } catch(e) {
+                    return [];
+                }
+            },
+            encode: JSON.stringify,
+        };
+        self.storage = new args.storage(storageModel);
+    }
+    defaultValue() { return []; }
+    defaultIsValid(value) {
+        return Array.isArray(value) && (empty(value) || (
+            equals(value.length, 6) && value.every((z, i) => {
+                return Number.isFinite(z) && z > 0 && (i === 0 || z > value[i - 1]);
+            })));
     }
 }
 
@@ -1123,6 +1158,9 @@ class Planned {
             }
             if(exists(response.hrZones)) {
                 xf.dispatch('ui:hrZones-set', response.hrZones);
+            }
+            if(exists(response.powerZones)) {
+                xf.dispatch('ui:powerZones-set', response.powerZones);
             }
         }
     }
@@ -1848,6 +1886,7 @@ const weight = new Weight({prop: 'weight', storage: LocalStorageItem});
 const hrMin = new HRMin({prop: 'hrMin', storage: LocalStorageItem});
 const hrMax = new HRMax({prop: 'hrMax', storage: LocalStorageItem});
 const hrZones = new HRZones({prop: 'hrZones', storage: LocalStorageItem});
+const powerZones = new PowerZones({prop: 'powerZones', storage: LocalStorageItem});
 const theme = new Theme({prop: 'theme', storage: LocalStorageItem});
 const dockMode = new DockMode({prop: 'dockMode', storage: LocalStorageItem});
 const volume = new Volume({prop: 'volume', storage: LocalStorageItem});
@@ -1908,6 +1947,7 @@ let models = {
     hrMin,
     hrMax,
     hrZones,
+    powerZones,
     dockMode,
     volume,
     theme,
