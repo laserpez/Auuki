@@ -419,22 +419,22 @@ class FTP extends Model {
 
         let index = 0;
         let name = zones[index];
-        if(value < (ftp * self.percentages.one)) {
+        if(value <= Math.round(ftp * self.percentages.one)) {
             index = 0;
             name = zones[index];
-        } else if(value < (ftp * self.percentages.two)) {
+        } else if(value <= Math.round(ftp * self.percentages.two)) {
             index = 1;
             name = zones[index];
-        } else if(value < (ftp * self.percentages.three)) {
+        } else if(value <= Math.round(ftp * self.percentages.three)) {
             index = 2;
             name = zones[index];
-        } else if(value < (ftp * self.percentages.four)) {
+        } else if(value <= Math.round(ftp * self.percentages.four)) {
             index = 3;
             name = zones[index];
-        } else if(value < (ftp * self.percentages.five)) {
+        } else if(value <= Math.round(ftp * self.percentages.five)) {
             index = 4;
             name = zones[index];
-        } else if (value < (ftp * self.percentages.six)) {
+        } else if (value <= Math.round(ftp * self.percentages.six)) {
             index = 5;
             name = zones[index];
         } else {
@@ -456,17 +456,17 @@ class FTP extends Model {
     percentageToZone(value) {
         const self = this;
         const zones = self.zones;
-        if(value < (self.percentages.one)) {
+        if(value <= self.percentages.one) {
             return zones[0];
-        } else if(value < (self.percentages.two)) {
+        } else if(value <= self.percentages.two) {
             return zones[1];
-        } else if(value < (self.percentages.three)) {
+        } else if(value <= self.percentages.three) {
             return zones[2];
-        } else if(value < (self.percentages.four)) {
+        } else if(value <= self.percentages.four) {
             return zones[3];
-        } else if(value < (self.percentages.five)) {
+        } else if(value <= self.percentages.five) {
             return zones[4];
-        } else if (value < (self.percentages.six)) {
+        } else if (value <= self.percentages.six) {
             return zones[5];
         } else {
             return zones[6];
