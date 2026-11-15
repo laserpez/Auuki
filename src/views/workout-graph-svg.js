@@ -45,6 +45,30 @@ class WorkoutGraphViewModel {
         const targetMax = Math.round(self.findMaxTarget(data) * ftp);
         return (targetMax > ftp) ? targetMax : ftp * 1.6;
     }
+    // Splits a ramp at the power zone bounds it crosses.
+    // Returns the fraction of the ramp (0..1) and the color of each segment.
+    rampSegments(powerStart, powerEnd, ftp) {
+        const low  = Math.min(powerStart, powerEnd);
+        const high = Math.max(powerStart, powerEnd);
+        const span = powerEnd - powerStart;
+
+        const cuts = Object.values(models.ftp.percentages)
+            .map((percentage) => Math.round(ftp * percentage))
+            .filter((bound) => bound > low && bound < high)
+            .map((bound) => (bound - powerStart) / span)
+            .sort((a, b) => a - b);
+
+        const edges = [0, ...cuts, 1];
+        const segments = [];
+        for(let i = 0; i < edges.length - 1; i++) {
+            const from = edges[i];
+            const to   = edges[i + 1];
+            const mid  = powerStart + span * (from + to) / 2;
+            const zone = models.ftp.powerToZone(mid, ftp).name;
+            segments.push({from, to, color: models.ftp.zoneToColor(zone)});
+        }
+        return segments;
+    }
     intervalToInfo(interval) {
         const firstStep = first(interval.steps);
         const lastStep = last(interval.steps);
@@ -86,17 +110,9 @@ class WorkoutGraphViewModel {
 
         // initial values
         let   x  = self.xOutRange.min;
-        let   x0 = self.xOutRange.min;
         const y0 = self.yOutRange.min;
-        let   x1 = self.xOutRange.min;
-        let   y1 = self.yOutRange.min;
-        let   x2 = self.xOutRange.min;
-        let   y2 = self.yOutRange.min;
-        let   x3 = self.xOutRange.min;
         const y3 = self.yOutRange.min;
 
-        let heightStart        = self.yOutRange.min;
-        let heightEnd          = self.yOutRange.min;
         let powerStartRelative = this.powerMin;
         let powerEndRelative   = this.powerMin;
         let powerStart         = 0;
@@ -107,7 +123,6 @@ class WorkoutGraphViewModel {
         const initialStep = initialInterval.steps[0];
         let stepPrev = initialStep;
         let points = '';
-        let color  = '#009e00'; // from css var(--power-zone-two)
 
         // accumulators
         let accX = 0;
@@ -116,12 +131,6 @@ class WorkoutGraphViewModel {
         for(let i = 0; i < intervals.length; i++) {
             let intervalPrev = (i === 0) ? initialInterval : intervals[i-1];
             let interval     = intervals[i];
-
-            // TODO: handle ramps zone change, maybe with
-            // - a mask
-            // - a nested polygon element for each color change
-            // for(let j = 0; j < interval.steps.length; j++) {
-            // }
 
             powerStartRelative = Math.max(
                 first(interval.steps)?.power ?? 0, this.powerMin
@@ -136,29 +145,31 @@ class WorkoutGraphViewModel {
 
             x = self.translate(accX, self.xInRange, self.xOutRange);
             width = self.translate(interval.duration, self.xInRange, self.xOutRange);
-            heightStart = self.translate(powerStart, self.yInRange, self.yOutRange);
-            heightEnd = self.translate(powerEnd, self.yInRange, self.yOutRange);
-
-            x0 = x;
-            x1 = x;
-            y1 = heightStart;
-            x2 = x1+width;
-            y2 = heightEnd;
-            x3 = x+width;
-
-            points = `${x0},${y0} ${x1},${y1} ${x2},${y2} ${x3},${y3}`;
-            color = models.ftp.zoneToColor(
-                models.ftp.powerToZone(powerStart, ftp).name
-            );
 
             const info = self.intervalToInfo(interval);
+            const segments = self.rampSegments(powerStart, powerEnd, ftp);
 
-            acc += `<polygon points="${points}"
-                             fill="${color}"
-                             power="${info.power}"
-                             cadence="${info.cadence}"
-                             slope="${info.slope}"
-                             duration="${info.duration}" />`;
+            for(let segment of segments) {
+                const xStart = x + width * segment.from;
+                const xEnd   = x + width * segment.to;
+                const yStart = self.translate(
+                    powerStart + (powerEnd - powerStart) * segment.from,
+                    self.yInRange, self.yOutRange
+                );
+                const yEnd = self.translate(
+                    powerStart + (powerEnd - powerStart) * segment.to,
+                    self.yInRange, self.yOutRange
+                );
+
+                points = `${xStart},${y0} ${xStart},${yStart} ${xEnd},${yEnd} ${xEnd},${y3}`;
+
+                acc += `<polygon points="${points}"
+                                 fill="${segment.color}"
+                                 power="${info.power}"
+                                 cadence="${info.cadence}"
+                                 slope="${info.slope}"
+                                 duration="${info.duration}" />`;
+            }
         }
 
         return `
