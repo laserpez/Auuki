@@ -997,6 +997,23 @@
                                         effect="powerTargetStep-set"
                                         prop="powerTargetStep">Set</button>
                             </div>
+                            <div id="erg-lead-settings" class="settings-tile">
+                                <label for="erg-lead-value" class="settings-tile--label">ERG lead (s)</label>
+                                <input is="int-input"
+                                    id="erg-lead-value"
+                                    class="settings-tile--input"
+                                    name="erg-lead-value"
+                                    type="number"
+                                    value="2"
+                                    prop="ergLead"
+                                    effect="ergLead-set" />
+                                <button is="set-button"
+                                        id="erg-lead-btn"
+                                        class="settings-tile--btn flat-btn"
+                                        default="2"
+                                        effect="ergLead-set"
+                                        prop="ergLead">Set</button>
+                            </div>
                         </div>
                         <div class="settings-tiles--row">
                             <div id="hr-min-settings" class="settings-tile">

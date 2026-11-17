@@ -284,6 +284,23 @@ class PowerTargetStep extends Model {
     }
 }
 
+class ErgLead extends Model {
+    postInit(args = {}) {
+        const storageModel = {
+            key: this.prop,
+            fallback: this.defaultValue(),
+            parse: parseInt,
+        };
+        this.min = 0;
+        this.max = 5;
+        this.storage = args.storage(storageModel);
+    }
+    defaultValue() { return 2; }
+    defaultIsValid(value) {
+        return Number.isInteger(value) && inRange(this.min, this.max, value);
+    }
+}
+
 class RollingAvgSize extends Model {
     postInit(args = {}) {
         const storageModel = {
@@ -1875,6 +1892,7 @@ const speedState   = new SpeedState();
 
 const powerTarget = new PowerTarget({prop: 'powerTarget'});
 const powerTargetStep = new PowerTargetStep({prop: 'powerTargetStep', storage: LocalStorageItem});
+const ergLead = new ErgLead({prop: 'ergLead', storage: LocalStorageItem});
 const resistanceTarget = new ResistanceTarget({prop: 'resistanceTarget'});
 const slopeTarget = new SlopeTarget({prop: 'slopeTarget'});
 const cadenceTarget = new CadenceTarget({prop: 'cadenceTarget'});
@@ -1933,6 +1951,7 @@ let models = {
 
     powerTarget,
     powerTargetStep,
+    ergLead,
     rollingAvgSize,
     heartRate60s,
     hrMaxPct60s,

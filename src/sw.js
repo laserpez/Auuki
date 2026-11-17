@@ -1,4 +1,4 @@
-const cacheName = 'Flux-v066';
+const cacheName = 'Flux-v067';
 const resources = [
     './',
     'index.html',

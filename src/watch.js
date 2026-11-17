@@ -4,6 +4,9 @@ import { models } from './models/models.js';
 import { ControlMode, } from './ble/enums.js';
 import { TimerStatus, EventType, } from './activity/enums.js';
 
+// rises below this fraction of FTP (ramp steps) are not anticipated
+const ergLeadMinRise = 0.10;
+
 // const timer = new Worker('./timer.js');
 const timer = new Worker(new URL('./timer.js', import.meta.url));
 
@@ -17,6 +20,10 @@ class Watch {
         this.stepIndex        = 0;
         this.intervalDuration = 0;
         this.stepDuration     = 0;
+        this.ergLead          = 0;
+        this.powerTarget      = 0;
+        this.ftp              = 0;
+        this.bias             = 100;
 
         this.state            = 'stopped';
         this.stateWorkout     = 'stopped';
@@ -43,6 +50,10 @@ class Watch {
         xf.sub('db:stepTime',         time => { self.stepTime      = time; });
         xf.sub('db:intervalDuration', time => { self.lapDuration   = time; });
         xf.sub('db:stepDuration',     time => { self.stepDuration  = time; });
+        xf.sub('db:ergLead',          lead => { self.ergLead       = lead; });
+        xf.sub('db:powerTarget',     power => { self.powerTarget   = power; });
+        xf.sub('db:ftp',               ftp => { self.ftp           = ftp; });
+        xf.sub('db:bias',             bias => { self.bias          = bias; });
         xf.sub('db:intervalIndex',   index => { self.intervalIndex = index; });
         xf.sub('db:stepIndex',       index => { self.stepIndex     = index; });
         xf.sub('db:watchStatus',     state => { self.state         = state; });
@@ -284,11 +295,43 @@ class Watch {
         xf.dispatch('watch:stepTime', stepTime);
 
         if(self.isWorkoutStarted() &&
+           self.ergLead > 0 &&
+           equals(stepTime, self.ergLead)) {
+            self.leadPowerTarget();
+        }
+
+        if(self.isWorkoutStarted() &&
            (stepTime <= 0) &&
             this.isIntervalType('duration')) {
 
             self.step();
         }
+    }
+    // Anticipates only rising power steps: the trainer needs a couple of
+    // seconds to reach the setpoint, falling edges are left on time.
+    leadPowerTarget() {
+        const self      = this;
+        const intervals = self.intervals;
+        const steps     = intervals[self.intervalIndex]?.steps;
+        if(!exists(steps)) return;
+
+        let nextStep = steps[self.stepIndex + 1];
+        if(!exists(nextStep)) {
+            nextStep = intervals[self.intervalIndex + 1]?.steps[0];
+        }
+        const power = nextStep?.power;
+        if(!exists(power) || exists(nextStep.slope)) return;
+
+        const current = steps[self.stepIndex]?.power;
+        if(!exists(current)) return;
+
+        // ramps are expanded in small steps: only big jumps get anticipated
+        const rise = models.ftp.toAbsolute(power, self.ftp) -
+                     models.ftp.toAbsolute(current, self.ftp);
+        if(rise < self.ftp * ergLeadMinRise) return;
+
+        const target = Math.round(models.ftp.toAbsolute(power, self.ftp) * self.bias / 100);
+        xf.dispatch('ui:power-target-set', target);
     }
     lap() {
         const self = this;

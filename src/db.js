@@ -54,6 +54,7 @@ let db = {
     // Targets
     powerTarget: models.powerTarget.default,
     powerTargetStep: models.powerTargetStep.default,
+    ergLead: models.ergLead.default,
     rollingAvgSize: models.rollingAvgSize.default,
     bias: 100,
     resistanceTarget: models.resistanceTarget.default,
@@ -295,6 +296,10 @@ xf.reg('ui:powerTargetStep-set', (step, db) => {
     db.powerTargetStep = models.powerTargetStep.set(step);
     models.powerTargetStep.storage.set(db.powerTargetStep);
 });
+xf.reg('ui:ergLead-set', (lead, db) => {
+    db.ergLead = models.ergLead.set(lead);
+    models.ergLead.storage.set(db.ergLead);
+});
 xf.reg('ui:rollingAvgSize-set', (size, db) => {
     db.rollingAvgSize = models.rollingAvgSize.set(size);
     models.rollingAvgSize.storage.set(db.rollingAvgSize);
@@ -503,6 +508,7 @@ xf.reg('app:start', async function(_, db) {
 
     db.ftp = models.ftp.set(models.ftp.restore());
     db.powerTargetStep = models.powerTargetStep.set(models.powerTargetStep.restore());
+    db.ergLead = models.ergLead.set(models.ergLead.restore());
     db.rollingAvgSize = models.rollingAvgSize.set(models.rollingAvgSize.restore());
     models.heartRate60s.setSize(db.rollingAvgSize);
     models.hrMaxPct60s.setSize(db.rollingAvgSize);
