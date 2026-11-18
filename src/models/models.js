@@ -1781,6 +1781,7 @@ class VirtualState extends MetaProp {
     onWeight(weight) {
         this.riderWeight = weight;
         this.systemWeight = this.riderWeight + this.equipmentWeight;
+        this.mass = this.systemWeight;
     }
     onStarted() {
         this.lastUpdate = Date.now();
