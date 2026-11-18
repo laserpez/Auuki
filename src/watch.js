@@ -5,7 +5,7 @@ import { ControlMode, } from './ble/enums.js';
 import { TimerStatus, EventType, } from './activity/enums.js';
 
 // rises below this fraction of FTP (ramp steps) are not anticipated
-const ergLeadMinRise = 0.10;
+const ergLeadMinRise = 0.05;
 
 // const timer = new Worker('./timer.js');
 const timer = new Worker(new URL('./timer.js', import.meta.url));
