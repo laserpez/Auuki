@@ -923,6 +923,12 @@ class Workout extends Model {
                 return { duration: dur, steps: microSteps };
             }
             const s = { duration: dur, power: 0 };
+            if(raw.freeride) {
+                // same as zwo FreeRide: SIM mode at 0% slope
+                s.slope = 0;
+                if(cadRange) s.cadence = cadRange;
+                return { duration: dur, steps: [s] };
+            }
             if(exists(raw.power)) {
                 if(exists(raw.power.value)) {
                     s.power = raw.power.units === '%ftp' ? raw.power.value / 100 : raw.power.value;
