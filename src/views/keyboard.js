@@ -20,9 +20,20 @@ function Keyboard() {
         if(e.isComposing ||
             keyCode === 229 ||
             e.ctrlKey ||
-            e.shiftKey ||
             e.altKey ||
             exists(e.target.form)) {
+            return;
+        }
+
+        if(e.shiftKey) {
+            if(isKeyUp(code)) {
+                e.preventDefault();
+                xf.dispatch('key:shift-up');
+            }
+            if(isKeyDown(code)) {
+                e.preventDefault();
+                xf.dispatch('key:shift-down');
+            }
             return;
         }
 
@@ -83,6 +94,14 @@ function KeyboardControls() {
         if(mode === ControlMode.sim) {
             xf.dispatch('ui:slope-target-dec');
         }
+    });
+
+    // Bias
+    xf.sub('key:shift-up', e => {
+        xf.dispatch('ui:bias-inc');
+    });
+    xf.sub('key:shift-down', e => {
+        xf.dispatch('ui:bias-dec');
     });
 
     // Modes
