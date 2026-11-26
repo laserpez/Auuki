@@ -55,7 +55,6 @@ function Router(args = {}) {
         const params = getParams();
         if(hasParams(params)) {
             await onQueryParams(params);
-        } else {
         }
         return;
     }
