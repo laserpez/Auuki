@@ -23,7 +23,6 @@ function authFailureAction(json, fallback = ':error') {
 function Auth(args = {}) {
     const api_uri = config.get().API_URI;
     const pwa_uri = config.get().PWA_URI;
-    const turnstile_site_key = config.get().TURNSTILE_SITE_KEY;
 
     let _loggedIn = false;
     let _hasApi = true;
@@ -56,7 +55,7 @@ function Auth(args = {}) {
             console.log(`:turnstile :render ${_turnstileId}`);
 
             _turnstileId = window.turnstile.render('#cf-turnstile-container', {
-                sitekey: '0x4AAAAADgz2Mji7aRumggZ',
+                sitekey: '0x4AAAAAADgz2Mji7aRumggZ',
             });
 
             _expired = false;
