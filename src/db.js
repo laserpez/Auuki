@@ -36,6 +36,7 @@ let db = {
     cadenceLap: models.cadenceLap.default,
     kcal: models.kcal.default,
     powerAvg: models.powerAvg.default,
+    virtualGear: models.virtualGear.default,
     cadenceAvg: models.cadenceAvg.default,
     heartRateAvg: models.heartRateAvg.default,
 
@@ -86,6 +87,7 @@ let db = {
     // Workouts
     workouts: [],
     workout: models.workout.default,
+    workoutTextEvent: "",
 
     // Activities
     activity: models.activity.default,
@@ -117,6 +119,7 @@ let db = {
 
     // Services
     services: {strava: false, intervals: false, trainingPeaks: false},
+    account: {identifier: ''},
 };
 
 
@@ -180,6 +183,10 @@ xf.reg(`coreBodyTemperature`, (coreBodyTemperature, db) => {
 
 xf.reg(`skinTemperature`, (skinTemperature, db) => {
     db.skinTemperature = skinTemperature;
+});
+
+xf.reg('ble:openBikeControl:buttonState', (messages, db) => {
+    db.virtualGear = models.virtualGear.apply(db.virtualGear, messages);
 });
 
 xf.reg(models.sources.prop, (sources, db) => {
@@ -497,6 +504,9 @@ xf.reg('auth', (x, db) => {
 
 xf.reg('services', (x, db) => {
     db.services = Object.assign(db.services, x);
+});
+xf.reg('account', (x, db) => {
+    db.account = {identifier: x?.identifier ?? ''};
 });
 
 
