@@ -2005,18 +2005,6 @@ navigation-action {
     color: var(--yellow);
 }
 
-.settings-tile--btn {
-    font-size: var(--font-size--label);
-    height: var(--height--label);
-    letter-spacing: 1px;
-    padding: 0 14px;
-
-    font-weight: bold;
-    text-transform: uppercase;
-    color: var(--foreground-color);
-    cursor: pointer;
-}
-
 .settings-btn-row {
     display: flex;
     align-items: center;

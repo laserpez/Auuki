@@ -12,11 +12,16 @@ class IntInput extends HTMLInputElement {
     postInit() { return; }
     connectedCallback() {
         this.addEventListener('change', this.onChange.bind(this));
+        this.addEventListener('keydown', this.onKeyDown.bind(this));
         xf.sub(`db:${this.prop}`, this.onUpdate.bind(this));
     }
     disconnectedCallback() {
         document.removeEventListener(`db:${this.prop}`, this.onUpdate);
         this.removeEventListener('change', this.onChange);
+        this.removeEventListener('keydown', this.onKeyDown);
+    }
+    onKeyDown(e) {
+        if(equals(e.key, 'Enter')) this.blur();
     }
     onUpdate(value) {
         if(!equals(value, this.state)) {
@@ -102,30 +107,6 @@ class EffectButton extends HTMLButtonElement {
 }
 
 customElements.define('effect-button', EffectButton, {extends: 'button'});
-
-class SetButton extends HTMLButtonElement {
-    constructor() {
-        super();
-        this.effect = this.getAttribute('effect');
-        this.prop = this.getAttribute('prop');
-        this.state = 0;
-    }
-    connectedCallback() {
-        xf.sub(`db:${this.prop}`, this.onUpdate.bind(this));
-        this.addEventListener('pointerup', this.onEffect.bind(this));
-    }
-    disconnectedCallback() {
-        this.removeEventListener('pointerup', this.onEffect);
-    }
-    onEffect(e) {
-        xf.dispatch(`ui:${this.effect}`, parseInt(this.state));
-    }
-    onUpdate(value) {
-        this.state = value;
-    }
-}
-
-customElements.define('set-button', SetButton, {extends: 'button'});
 
 class Upload extends HTMLInputElement {
     constructor() {
